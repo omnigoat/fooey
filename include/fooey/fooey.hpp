@@ -1,6 +1,7 @@
 #ifndef FOOEY_HPP
 #define FOOEY_HPP
 //======================================================================
+#include <memory>
 #include <string>
 #include <set>
 #include <vector>
@@ -75,8 +76,6 @@ namespace fooey {
 		//======================================================================
 		struct property_t
 		{
-			
-
 			property_t(bool propagate_changes = true)
 				: propagate_changes_(propagate_changes)
 			{
@@ -125,7 +124,13 @@ namespace fooey {
 		};
 	}
 
-
+	namespace input
+	{
+		enum class event_t
+		{
+			something
+		};
+	}
 
 
 	//======================================================================
@@ -133,30 +138,14 @@ namespace fooey {
 	//======================================================================
 	struct window_t : containing_widget_t, properties::captioned_t
 	{
-		window_t(properties::captioned_t::caption_t const& caption)
-			: properties::property_t(false), captioned_t(caption)
-		{
-		}
+		window_t(properties::captioned_t::caption_t const& caption);
 		
 		auto set_visible(bool) -> void;
 
 	private:
-		auto on_input_event(input::event_t e) -> void //override
-		{
-		}
+		auto on_input_event(input::event_t e) -> void;
 
-		auto on_changed_property(properties::event_t e) -> void override
-		{
-			switch (e)
-			{
-				case properties::event_t::caption_changed:
-					// do something?
-					break;
-
-				default:
-					break;
-			}
-		}
+		auto on_changed_property(properties::event_t e) -> void override;
 	};
 
 

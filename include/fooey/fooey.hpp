@@ -38,6 +38,9 @@ namespace fooey {
 		widget_t();
 		virtual ~widget_t();
 
+		auto operator [](widget_ptr const&) -> widget_ptr;
+		auto operator [](widget_group_t const&) -> widget_ptr;
+
 	private:
 		widget_wptr parent_;
 		ux_t left_, top_, width_, height_;

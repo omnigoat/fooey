@@ -15,15 +15,30 @@
     <Filter Include="source\platform\win32">
       <UniqueIdentifier>{3380f006-df94-4993-b4ce-567b60094a74}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\widgets">
+      <UniqueIdentifier>{afb7c202-5e3a-46d2-8ecd-cac5a67fe06f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\fooey\fooey.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\fooey\properties.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\fooey\widgets\window.hpp">
+      <Filter>include\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\fooey\widget.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\platform\win32\window.cpp">
       <Filter>source\platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\widget.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

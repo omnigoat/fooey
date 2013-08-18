@@ -1,3 +1,4 @@
+#if 0
 #include <fooey/fooey.hpp>
 #include <atma/assert.hpp>
 
@@ -5,11 +6,13 @@
 
 #include <map>
 
+#if 0
 namespace
 {
 	typedef std::map<HWND, void*> mapped_hwnds_t;
 	mapped_hwnds_t mapped_hwnds_;
 }
+#endif
 
 using namespace fooey;
 
@@ -57,3 +60,4 @@ auto window_t::on_changed_property(properties::event_t e) -> void
 			break;
 	}
 }
+#endif

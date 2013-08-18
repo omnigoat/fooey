@@ -5,65 +5,22 @@
 #include <string>
 #include <set>
 #include <vector>
+#include <atma/evented/event.hpp>
+#include <fooey/widget.hpp>
 //======================================================================
 namespace fooey {
 //======================================================================
 	
-	struct ux_t
+	struct window_event_t
 	{
-		enum type_t {
-			percentage,
-			exact
+		enum id_t {
+			minimise,
+			maximise,
+			restore,
+			close
 		};
-
-		//auto type() const -> type_t { return type_; }
-		//auto value() const -> float { return value_; }
-
-	//private:
-		type_t type;
-		float value;
-		//void* relative_to_;
 	};
 
-
-	// a widget is an on-screen element that is extensible.
-	// a.k.a: it is not for things which are merely concepts. concrete things only please.
-	struct widget_t;
-	typedef std::shared_ptr<widget_t> widget_ptr;
-	typedef std::weak_ptr<widget_t> widget_wptr;
-
-	
-	struct widget_t
-	{
-		widget_t();
-		virtual ~widget_t();
-
-		auto operator [](widget_ptr const&) -> widget_ptr;
-		auto operator [](widget_group_t const&) -> widget_ptr;
-
-	private:
-		widget_wptr parent_;
-		ux_t left_, top_, width_, height_;
-	};
-
-	
-
-	struct containing_widget_t : widget_t
-	{
-		typedef std::set<widget_ptr> children_t;
-
-		auto add_child(widget_ptr const&) -> void;
-		
-	private:
-		children_t children_;
-	};
-
-
-	
-
-	
-
-	
 
 
 	namespace properties
@@ -94,7 +51,7 @@ namespace fooey {
 			}
 
 		protected:
-			virtual auto on_changed_property(event_t) -> void = 0;
+			virtual auto on_changed_property(event_t) -> void {}
 
 		private:
 			bool propagate_changes_;
@@ -134,28 +91,6 @@ namespace fooey {
 			something
 		};
 	}
-
-
-	//======================================================================
-	// window
-	//======================================================================
-	struct window_t : containing_widget_t, properties::captioned_t
-	{
-		window_t(properties::captioned_t::caption_t const& caption);
-		
-		auto set_visible(bool) -> void;
-
-	private:
-		auto on_input_event(input::event_t e) -> void;
-
-		auto on_changed_property(properties::event_t e) -> void override;
-	};
-
-
-	struct button_t : widget_t, properties::captioned_t
-	{
-
-	};
 
 //======================================================================
 } // fooey

@@ -43,7 +43,7 @@
     <ClCompile Include="..\source\widgets\window.cpp">
       <Filter>source\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\platform\win32\win32_window.cpp">
+    <ClCompile Include="..\source\platform\win32\win32_renderer.cpp">
       <Filter>source\platform\win32</Filter>
     </ClCompile>
   </ItemGroup>

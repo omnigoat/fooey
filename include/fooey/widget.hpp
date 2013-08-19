@@ -58,6 +58,10 @@ namespace fooey {
 	template <typename T>
 	struct widget_ptr_t
 	{
+		widget_ptr_t()
+		{
+		}
+
 		explicit widget_ptr_t(T* x)
 		: backend_(x)
 		{
@@ -68,13 +72,28 @@ namespace fooey {
 		{
 		}
 
+		template <typename U>
+		widget_ptr_t(widget_ptr_t<U> const& rhs)
+		: backend_(rhs.backend_)
+		{
+		}
+
 		widget_ptr_t(widget_ptr_t&& rhs)
 		: backend_(std::move(rhs.backend_))
 		{
 		}
 
-		auto operator = (widget_ptr_t const&) -> widget_ptr_t&;
-		auto operator = (widget_ptr_t&&) -> widget_ptr_t&;
+		auto operator = (widget_ptr_t const& rhs)-> widget_ptr_t&
+		{
+			backend_ = rhs.backend_;
+			return *this;
+		}
+
+		auto operator = (widget_ptr_t&& rhs) -> widget_ptr_t&
+		{
+			std::swap(backend_, rhs.backend_);
+			return *this;
+		}
 		
 		auto operator * () const -> widget_ptr_t& { return *backend_; }
 		auto operator -> () const -> T* { return backend_.get(); }
@@ -96,6 +115,9 @@ namespace fooey {
 
 	private:
 		std::shared_ptr<T> backend_;
+
+		template <typename U>
+		friend struct widget_ptr_t;
 	};
 
 	

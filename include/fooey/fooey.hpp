@@ -7,6 +7,7 @@
 #include <vector>
 #include <atma/evented/event.hpp>
 #include <fooey/widget.hpp>
+#include <fooey/widgets/window.hpp>
 //======================================================================
 namespace fooey {
 //======================================================================
@@ -23,73 +24,19 @@ namespace fooey {
 
 
 
-	namespace properties
+	struct renderer_t
 	{
-		enum class event_t
-		{
-			caption_changed,
-		};
+		virtual ~renderer_t() {}
+		virtual auto register_window(window_ptr const&) -> void = 0;
+	};
 
+	typedef std::shared_ptr<renderer_t> renderer_ptr;
 
-		//======================================================================
-		// a property!
-		//======================================================================
-		struct property_t
-		{
-			property_t(bool propagate_changes = true)
-				: propagate_changes_(propagate_changes)
-			{
-			}
-
-			auto trigger_change(event_t e) -> void {
-				if (propagate_changes_)
-					on_changed_property(e);
-			}
-
-			auto propagate_changes(bool k) -> void {
-				propagate_changes_ = k;
-			}
-
-		protected:
-			virtual auto on_changed_property(event_t) -> void {}
-
-		private:
-			bool propagate_changes_;
-		};
-
-
-		//======================================================================
-		// captioned
-		//======================================================================
-		struct captioned_t : virtual property_t
-		{
-			typedef std::string caption_t;
-
-			captioned_t(caption_t const& caption)
-				: caption_(caption)
-			{
-			}
-
-			auto caption() const -> caption_t const& {
-				return caption_;
-			}
-		
-			auto set_caption(caption_t const& caption) -> void { 
-				caption_ = caption;
-				trigger_change(event_t::caption_changed);
-			}
-
-		private:
-			caption_t caption_;
-		};
-	}
+	auto system_renderer() -> renderer_ptr;
 
 	namespace input
 	{
-		enum class event_t
-		{
-			something
-		};
+		auto register_ui(widget_ptr const&) -> void;
 	}
 
 //======================================================================

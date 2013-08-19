@@ -2,11 +2,17 @@
 #include <atma/assert.hpp>
 
 #include <atma/config/platform.hpp>
+#include <atma/lockfree/queue.hpp>
 
 #include <map>
 #include <thread>
 
 using namespace fooey;
+
+//======================================================================
+// 
+//======================================================================
+
 
 
 //======================================================================
@@ -24,18 +30,17 @@ private:
 
 	std::thread wndproc_thread_;
 
+	typedef atma::lockfree::queue_t< std::function<void()> > commands_t;
+	commands_t commands_;
+	bool running_;
+
 	typedef std::map<HWND, widget_ptr> mapped_hwnds_t;
 	mapped_hwnds_t mapped_hwnds_;
 };
 
 static LRESULT CALLBACK wnd_proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	//BaseWindow *c = (BaseWindow *)GetWindowLong(hWnd, GWLP_USERDATA);
-
-	//if (c == NULL)
 	return DefWindowProc(hWnd, msg, wParam, lParam);
-
-	//return c->WindowProc(hWnd, msg, wParam, lParam);
 }
 
 
@@ -43,14 +48,38 @@ static LRESULT CALLBACK wnd_proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 // system_renderer()
 //======================================================================
 win32_renderer_t::win32_renderer_t()
+	: running_(true)
 {
-	wndproc_thread_ = std::thread([] {
-		
+	wndproc_thread_ = std::thread([=] {
+		while (running_)
+		{
+			// first, do commands!
+			std::function<void()> command;
+			while (commands_.pop(command)) {
+				command();
+			}
+
+			// secondly, do messages
+			// ...
+			MSG msg;
+			while (PeekMessage(&msg, NULL, 0, 0, TRUE) > 0)
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+		}
+
+		// do any more commands that were left over
+		std::function<void()> command;
+		while (commands_.pop(command)) {
+			command();
+		}
 	});
 }
 
 win32_renderer_t::~win32_renderer_t()
 {
+	running_ = false;
 	wndproc_thread_.join();
 }
 
@@ -75,29 +104,32 @@ auto win32_renderer_t::register_window(window_ptr const& window) -> void
 
 auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 {
-	static char const* win32_classnames = "abcdefghijklmno";
-	static uint32_t win32_classname_idx = 0;
+	commands_.push([&window] {
+		static char const* win32_classnames = "abcdefghijklmno";
+		static uint32_t win32_classname_idx = 0;
 
-	HINSTANCE hh = GetModuleHandle(NULL);
+		HINSTANCE hh = GetModuleHandle(NULL);
 
-	ATMA_ASSERT(win32_classnames[win32_classname_idx]);
+		ATMA_ASSERT(win32_classnames[win32_classname_idx]);
 
-	WNDCLASS wc = {
-		0, &wnd_proc,
-		0, 0,
-		hh,
-		nullptr,
-		nullptr,
-		(HBRUSH)(COLOR_BACKGROUND),
-		nullptr,
-		win32_classnames + win32_classname_idx++
-	};
+		WNDCLASS wc = {
+			0, &wnd_proc,
+			0, 0,
+			hh,
+			nullptr,
+			nullptr,
+			(HBRUSH)(COLOR_BACKGROUND),
+			nullptr,
+			win32_classnames + win32_classname_idx++
+		};
 
-	ATOM class_atom = RegisterClass(&wc);
-	ATMA_ASSERT(class_atom);
+		ATOM class_atom = RegisterClass(&wc);
+		ATMA_ASSERT(class_atom);
 
-	HWND hwnd = CreateWindow((LPCTSTR)class_atom, window->caption().c_str(), WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0,0,640,480,0,0,hh,NULL);
-	return hwnd;
+		HWND hwnd = CreateWindow((LPCTSTR)class_atom, window->caption().c_str(), WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0,0,640,480,0,0,hh,NULL);
+	});
+
+	return 0;
 }
 
 

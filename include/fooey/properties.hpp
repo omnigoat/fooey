@@ -17,7 +17,8 @@ namespace properties {
 
 
 	//======================================================================
-	// a property!
+	// property_t
+	//   - inherited virtually
 	//======================================================================
 	struct property_t
 	{
@@ -39,6 +40,7 @@ namespace properties {
 		virtual auto on_changed_property(event_t) -> void = 0;
 
 	private:
+		//atma::lockfree::queue_t<event_t> event_queue_;
 		bool propagate_changes_;
 	};
 

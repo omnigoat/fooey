@@ -38,9 +38,33 @@ private:
 	mapped_hwnds_t mapped_hwnds_;
 };
 
-static LRESULT CALLBACK wnd_proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-	return DefWindowProc(hWnd, msg, wParam, lParam);
+#if 0
+	switch (msg)
+	{
+		case WM_SYSCOMMAND:
+		{
+			switch (wparam)
+			{
+				case SW_MINIMIZE:
+					window->queue_event(&window_t::on_minimise);
+					break;
+
+				case SW_MAXIMIZE:
+					window->queue_event(&window_t::on_maximise);
+					break;
+
+				case SC_CLOSE:
+					window->queue_event(&window_t::on_close);
+					break;
+			}
+			break;
+		}
+	}
+#endif
+
+	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
 
@@ -112,7 +136,7 @@ auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 
 		ATMA_ASSERT(win32_classnames[win32_classname_idx]);
 
-		WNDCLASS wc = {
+		auto wc = WNDCLASS{
 			0, &wnd_proc,
 			0, 0,
 			hh,
@@ -131,41 +155,3 @@ auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 
 	return 0;
 }
-
-
-#if 0
-
-
-#if 0
-namespace
-{
-	
-}
-#endif
-
-
-using fooey::window_t;
-
-window_t::window_t(properties::captioned_t::caption_t const& caption)
-	: properties::property_t(false), captioned_t(caption)
-{
-#if 0
-	
-	//while( GetMessage( &msg, NULL, 0, 0 ) > 0 )
-		//DispatchMessage( &msg );
-#endif
-}
-
-auto window_t::on_changed_property(properties::event_t e) -> void
-{
-	switch (e)
-	{
-		case properties::event_t::caption_changed:
-			// do something?
-			break;
-
-		default:
-			break;
-	}
-}
-#endif

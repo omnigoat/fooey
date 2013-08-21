@@ -1,6 +1,7 @@
 
 ; ignore visual studio files
 Debug/
+Release/
 *.opensdf
 *.suo
 *.sdf

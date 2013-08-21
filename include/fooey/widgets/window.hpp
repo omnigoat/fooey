@@ -18,8 +18,8 @@ namespace fooey {
 
 
 		// events
-		atma::evented::event_t<> on_minimise;
-		atma::evented::event_t<> on_maximise;
+		atma::evented::event_t<int()> on_minimise;
+		atma::evented::event_t<void()> on_maximise;
 		atma::evented::event_t<> on_restore;
 		atma::evented::event_t<> on_close;
 

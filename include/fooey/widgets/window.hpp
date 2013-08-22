@@ -1,9 +1,11 @@
 #ifndef FOOEY_WIDGETS_WINDOW_HPP
 #define FOOEY_WIDGETS_WINDOW_HPP
 //======================================================================
+#include <chrono>
 #include <fooey/widget.hpp>
 #include <fooey/properties.hpp>
 #include <atma/evented/event.hpp>
+#include <atma/lockfree/queue.hpp>
 //======================================================================
 namespace fooey {
 //======================================================================
@@ -18,8 +20,8 @@ namespace fooey {
 
 
 		// events
-		atma::evented::event_t<int()> on_minimise;
-		atma::evented::event_t<void()> on_maximise;
+		atma::evented::event_t<> on_minimise;
+		atma::evented::event_t<> on_maximise;
 		atma::evented::event_t<> on_restore;
 		atma::evented::event_t<> on_close;
 

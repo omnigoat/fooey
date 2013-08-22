@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\platform\win32\win32_renderer.cpp" />
+    <ClCompile Include="..\source\process_events.cpp" />
     <ClCompile Include="..\source\widget.cpp" />
     <ClCompile Include="..\source\widgets\window.cpp" />
   </ItemGroup>

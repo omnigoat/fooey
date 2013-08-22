@@ -21,11 +21,22 @@ widget_t::~widget_t()
 {
 }
 
+auto widget_t::queued_events() -> event_queue_t&
+{
+	return event_queue_;
+}
+
+auto widget_t::queue_event(widget_t::queued_event_t::first_type time, widget_t::queued_event_t::second_type msg) -> void
+{
+	event_queue_.push(std::make_pair(time, msg));
+}
 
 auto fooey::operator , (widget_ptr const& lhs, widget_ptr const& rhs) -> widget_group_t
 {
 	return widget_group_t{lhs, rhs};
 }
+
+
 
 //======================================================================
 // widget_group_t

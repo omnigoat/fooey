@@ -23,7 +23,7 @@ struct win32_renderer_t : fooey::renderer_t
 	win32_renderer_t();
 	~win32_renderer_t();
 
-	auto register_window(window_ptr const& window) -> void override;
+	auto add_window(window_ptr const& window) -> void override;
 
 private:
 	auto build_win32_window(window_ptr const&) -> HWND;
@@ -40,29 +40,37 @@ private:
 
 static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-#if 0
+	auto now = std::chrono::high_resolution_clock::now();
+
+	auto window = (widget_t*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
+	
 	switch (msg)
 	{
 		case WM_SYSCOMMAND:
 		{
 			switch (wparam)
 			{
-				case SW_MINIMIZE:
-					window->queue_event(&window_t::on_minimise);
+				case SC_MINIMIZE:
+					window->queue_event(now, event_t::minimise);
 					break;
 
-				case SW_MAXIMIZE:
-					window->queue_event(&window_t::on_maximise);
+				case SC_MAXIMIZE:
+					window->queue_event(now, event_t::maximise);
+					break;
+
+				case SC_RESTORE:
+					window->queue_event(now, event_t::restore);
 					break;
 
 				case SC_CLOSE:
-					window->queue_event(&window_t::on_close);
+					window->queue_event(now, event_t::close);
 					break;
 			}
+
 			break;
 		}
 	}
-#endif
 
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
@@ -118,7 +126,7 @@ auto fooey::system_renderer() -> fooey::renderer_ptr
 //======================================================================
 // win32_renderer_t implementation
 //======================================================================
-auto win32_renderer_t::register_window(window_ptr const& window) -> void
+auto win32_renderer_t::add_window(window_ptr const& window) -> void
 {
 	HWND hwnd = build_win32_window(window);
 
@@ -151,6 +159,9 @@ auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 		ATMA_ASSERT(class_atom);
 
 		HWND hwnd = CreateWindow((LPCTSTR)class_atom, window->caption().c_str(), WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0,0,640,480,0,0,hh,NULL);
+
+		// set the windows long to the pointer of our window
+		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)static_cast<widget_t*>(window.get()));
 	});
 
 	return 0;

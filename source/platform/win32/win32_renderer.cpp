@@ -42,8 +42,8 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 {
 	auto now = std::chrono::high_resolution_clock::now();
 
-	auto window = (widget_t*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-
+	auto widget = (widget_t*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+	auto window = dynamic_cast<window_t*>(widget);
 	
 	switch (msg)
 	{
@@ -51,6 +51,7 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 		{
 			switch (wparam)
 			{
+#if 0
 				case SC_MINIMIZE:
 					window->queue_event(now, event_t::minimise);
 					break;
@@ -66,6 +67,24 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 				case SC_CLOSE:
 					window->queue_event(now, event_t::close);
 					break;
+#else
+				case SC_MINIMIZE:
+					window->on_minimise.fire();
+					break;
+
+				case SC_MAXIMIZE:
+					window->on_maximise.fire();
+					break;
+
+				case SC_RESTORE:
+					window->on_restore.fire();
+					break;
+
+				case SC_CLOSE:
+					window->on_close.fire();
+					break;
+#endif
+
 			}
 
 			break;

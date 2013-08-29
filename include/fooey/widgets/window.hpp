@@ -6,6 +6,7 @@
 #include <fooey/properties.hpp>
 #include <atma/event.hpp>
 #include <atma/lockfree/queue.hpp>
+#include <atma/config/platform.hpp>
 //======================================================================
 namespace fooey {
 //======================================================================
@@ -18,13 +19,14 @@ namespace fooey {
 		
 		auto set_visible(bool) -> void;
 
-
 		// events atma
 		atma::event_t<> on_minimise;
 		atma::event_t<> on_maximise;
 		atma::event_t<> on_restore;
 		atma::event_t<> on_close;
 		atma::event_t<> on_resize;
+
+		HWND hwnd;
 
 	private:
 		auto on_changed_property(properties::event_t e) -> void override {}

@@ -149,9 +149,6 @@ auto fooey::system_renderer() -> fooey::renderer_ptr
 	return fooey::renderer_ptr(new win32_renderer_t);
 }
 
-
-
-
 //======================================================================
 // win32_renderer_t implementation
 //======================================================================
@@ -188,7 +185,7 @@ auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 		ATMA_ASSERT(class_atom);
 
 		HWND hwnd = CreateWindow((LPCTSTR)class_atom, window->caption().c_str(), WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0,0,640,480,0,0,hh,NULL);
-
+		window->hwnd = hwnd;
 		// set the windows long to the pointer of our window
 		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)static_cast<widget_t*>(window.get()));
 	});

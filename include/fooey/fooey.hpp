@@ -5,7 +5,7 @@
 #include <string>
 #include <set>
 #include <vector>
-#include <atma/evented/event.hpp>
+#include <atma/event.hpp>
 #include <fooey/widget.hpp>
 #include <fooey/widgets/window.hpp>
 //======================================================================

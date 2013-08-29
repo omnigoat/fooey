@@ -4,7 +4,7 @@
 #include <chrono>
 #include <fooey/widget.hpp>
 #include <fooey/properties.hpp>
-#include <atma/evented/event.hpp>
+#include <atma/event.hpp>
 #include <atma/lockfree/queue.hpp>
 //======================================================================
 namespace fooey {
@@ -20,11 +20,11 @@ namespace fooey {
 
 
 		// events atma
-		atma::evented::event_t<> on_minimise;
-		atma::evented::event_t<> on_maximise;
-		atma::evented::event_t<> on_restore;
-		atma::evented::event_t<> on_close;
-		atma::evented::event_t<> on_resize;
+		atma::event_t<> on_minimise;
+		atma::event_t<> on_maximise;
+		atma::event_t<> on_restore;
+		atma::event_t<> on_close;
+		atma::event_t<> on_resize;
 
 	private:
 		auto on_changed_property(properties::event_t e) -> void override {}

@@ -45,7 +45,7 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 	auto widget = (widget_t*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 	auto window = dynamic_cast<window_t*>(widget);
 	
-	atma::evented::flowcontrol_t fc;
+	atma::event_flow_t fc;
 
 	switch (msg)
 	{
@@ -98,7 +98,7 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 			break;
 	}
 
-	if (fc.prevent_default())
+	if (fc.prevented())
 		return 0;
 	
 	return DefWindowProc(hwnd, msg, wparam, lparam);

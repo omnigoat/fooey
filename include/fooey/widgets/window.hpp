@@ -19,11 +19,12 @@ namespace fooey {
 		auto set_visible(bool) -> void;
 
 
-		// events
+		// events atma
 		atma::evented::event_t<> on_minimise;
 		atma::evented::event_t<> on_maximise;
 		atma::evented::event_t<> on_restore;
 		atma::evented::event_t<> on_close;
+		atma::evented::event_t<> on_resize;
 
 	private:
 		auto on_changed_property(properties::event_t e) -> void override {}

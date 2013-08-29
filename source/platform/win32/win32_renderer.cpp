@@ -45,6 +45,8 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 	auto widget = (widget_t*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 	auto window = dynamic_cast<window_t*>(widget);
 	
+	atma::evented::flowcontrol_t fc;
+
 	switch (msg)
 	{
 		case WM_SYSCOMMAND:
@@ -69,28 +71,36 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 					break;
 #else
 				case SC_MINIMIZE:
-					window->on_minimise.fire();
+					fc = window->on_minimise.fire();
 					break;
 
 				case SC_MAXIMIZE:
-					window->on_maximise.fire();
+					fc = window->on_maximise.fire();
 					break;
 
 				case SC_RESTORE:
-					window->on_restore.fire();
+					fc = window->on_restore.fire();
 					break;
 
 				case SC_CLOSE:
-					window->on_close.fire();
+					fc = window->on_close.fire();
 					break;
+
 #endif
 
 			}
 
 			break;
 		}
+
+		case WM_SIZE:
+			fc = window->on_resize.fire();
+			break;
 	}
 
+	if (fc.prevent_default())
+		return 0;
+	
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 

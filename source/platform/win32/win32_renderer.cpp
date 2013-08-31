@@ -94,7 +94,7 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 		}
 
 		case WM_SIZE:
-			fc = window->on_resize.fire();
+			fc = window->on_resize.fire((uint32_t)(lparam >> 16), (uint32_t)(lparam & 0xffff));
 			break;
 	}
 

@@ -24,7 +24,7 @@ namespace fooey {
 		atma::event_t<> on_maximise;
 		atma::event_t<> on_restore;
 		atma::event_t<> on_close;
-		atma::event_t<> on_resize;
+		atma::event_t<uint32_t, uint32_t> on_resize;
 
 		HWND hwnd;
 

@@ -79,11 +79,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\include\fooey\fooey.hpp" />
+    <ClInclude Include="..\include\fooey\keys.hpp" />
     <ClInclude Include="..\include\fooey\properties.hpp" />
     <ClInclude Include="..\include\fooey\widget.hpp" />
     <ClInclude Include="..\include\fooey\widgets\window.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\source\keys.cpp" />
     <ClCompile Include="..\source\platform\win32\win32_renderer.cpp" />
     <ClCompile Include="..\source\process_events.cpp" />
     <ClCompile Include="..\source\widget.cpp" />

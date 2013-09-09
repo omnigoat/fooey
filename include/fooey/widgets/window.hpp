@@ -4,6 +4,7 @@
 #include <chrono>
 #include <fooey/widget.hpp>
 #include <fooey/properties.hpp>
+#include <fooey/keys.hpp>
 #include <atma/event.hpp>
 #include <atma/lockfree/queue.hpp>
 #include <atma/config/platform.hpp>
@@ -15,7 +16,7 @@ namespace fooey {
 		widget_t,
 		properties::captioned_t
 	{
-		window_t(properties::captioned_t::caption_t const& caption);
+		window_t(properties::captioned_t::caption_t const& caption, uint32_t width, uint32_t height);
 		
 		auto set_visible(bool) -> void;
 
@@ -26,6 +27,9 @@ namespace fooey {
 		atma::event_t<> on_close;
 		atma::event_t<uint32_t, uint32_t> on_resize;
 
+		//
+		key_state_t key_state;
+
 		HWND hwnd;
 
 	private:
@@ -35,9 +39,9 @@ namespace fooey {
 	typedef widget_ptr_t<window_t> window_ptr;
 
 
-	inline auto window(std::string const& caption) -> window_ptr
+	inline auto window(std::string const& caption, uint32_t width, uint32_t height) -> window_ptr
 	{
-		return window_ptr(new window_t(caption));
+		return window_ptr(new window_t(caption, width, height));
 	}
 
 

@@ -85,9 +85,7 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 				case SC_CLOSE:
 					fc = window->on_close.fire();
 					break;
-
 #endif
-
 			}
 
 			break;
@@ -95,6 +93,14 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
 		case WM_SIZE:
 			fc = window->on_resize.fire((uint32_t)(lparam >> 16), (uint32_t)(lparam & 0xffff));
+			break;
+
+		case WM_KEYDOWN:
+			window->key_state.down(static_cast<fooey::key_t>(wparam));
+			break;
+
+		case WM_KEYUP:
+			window->key_state.up(static_cast<fooey::key_t>(wparam));
 			break;
 	}
 

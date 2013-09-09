@@ -14,6 +14,12 @@ using fooey::widget_group_t;
 // widget_t
 //======================================================================
 widget_t::widget_t()
+	: width_(), height_(), left_(), top_()
+{
+}
+
+widget_t::widget_t(uint32_t width, uint32_t height)
+	: width_(width), height_(height)
 {
 }
 

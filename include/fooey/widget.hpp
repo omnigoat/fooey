@@ -53,19 +53,23 @@ namespace fooey {
 		typedef atma::lockfree::queue_t<queued_event_t> event_queue_t;
 
 		widget_t();
+		widget_t(uint32_t width, uint32_t height);
 		virtual ~widget_t();
 
+		auto width_in_pixels() const -> uint32_t { return width_; }
+		auto height_in_pixels() const -> uint32_t { return height_; }
 		auto children() const -> children_t const& { return children_; }
 		auto queued_events() -> event_queue_t&;
 
 		auto add_child(widget_ptr const&) -> void;
 		auto queue_event(std::chrono::high_resolution_clock::time_point, event_t) -> void;
 
-	private:
+	protected:
 		widget_t* parent_;
 		children_t children_;
-		ux_t left_, top_, width_, height_;
+		uint32_t left_, top_, width_, height_;
 
+	private:
 		// events
 		event_queue_t event_queue_;
 	};

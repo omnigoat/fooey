@@ -35,6 +35,9 @@
     <ClInclude Include="..\include\fooey\widget.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\fooey\keys.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\widget.cpp">
@@ -47,6 +50,9 @@
       <Filter>source\platform\win32</Filter>
     </ClCompile>
     <ClCompile Include="..\source\process_events.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\keys.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

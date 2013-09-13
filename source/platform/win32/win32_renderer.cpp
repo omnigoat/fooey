@@ -40,7 +40,7 @@ private:
 
 static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-	auto now = std::chrono::high_resolution_clock::now();
+	//auto now = std::chrono::high_resolution_clock::now();
 
 	auto widget = (widget_t*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 	auto window = dynamic_cast<window_t*>(widget);
@@ -49,27 +49,14 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
 	switch (msg)
 	{
+		case WM_CREATE:
+			SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)((CREATESTRUCT*)lparam)->lpCreateParams);
+			break;
+
 		case WM_SYSCOMMAND:
 		{
 			switch (wparam)
 			{
-#if 0
-				case SC_MINIMIZE:
-					window->queue_event(now, event_t::minimise);
-					break;
-
-				case SC_MAXIMIZE:
-					window->queue_event(now, event_t::maximise);
-					break;
-
-				case SC_RESTORE:
-					window->queue_event(now, event_t::restore);
-					break;
-
-				case SC_CLOSE:
-					window->queue_event(now, event_t::close);
-					break;
-#else
 				case SC_MINIMIZE:
 					fc = window->on_minimise.fire();
 					break;
@@ -85,9 +72,7 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 				case SC_CLOSE:
 					fc = window->on_close.fire();
 					break;
-#endif
 			}
-
 			break;
 		}
 
@@ -109,6 +94,7 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 	
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
+
 
 
 //======================================================================
@@ -190,10 +176,10 @@ auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 		ATOM class_atom = RegisterClass(&wc);
 		ATMA_ASSERT(class_atom);
 
-		HWND hwnd = CreateWindow((LPCTSTR)class_atom, window->caption().c_str(), WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0,0,640,480,0,0,hh,NULL);
+
+
+		HWND hwnd = CreateWindow((LPCTSTR)class_atom, window->caption().c_str(), WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0,0,window->width_in_pixels(),window->height_in_pixels(),0,0,hh, window.get());
 		window->hwnd = hwnd;
-		// set the windows long to the pointer of our window
-		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)static_cast<widget_t*>(window.get()));
 	});
 
 	return 0;

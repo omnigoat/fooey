@@ -77,7 +77,7 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 		}
 
 		case WM_SIZE:
-			fc = window->on_resize.fire((uint32_t)(lparam >> 16), (uint32_t)(lparam & 0xffff));
+			fc = window->on_resize.fire((uint32_t)(lparam & 0xffff), (uint32_t)(lparam >> 16));
 			break;
 
 		case WM_KEYDOWN:
@@ -89,7 +89,7 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 			break;
 	}
 
-	if (fc.prevented())
+	if (fc.is_prevented())
 		return 0;
 	
 	return DefWindowProc(hwnd, msg, wparam, lparam);

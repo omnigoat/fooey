@@ -76,8 +76,17 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 			break;
 		}
 
+#if 1
+		case WM_SIZING:
+		{
+			auto k = (LPRECT)lparam;
+			fc = window->on_resize.fire(k->right - k->left, k->bottom - k->top);
+			break;
+		}
+#endif
+
 		case WM_SIZE:
-			fc = window->on_resize.fire((uint32_t)(lparam & 0xffff), (uint32_t)(lparam >> 16));
+			//fc = window->on_resize.fire((uint32_t)(lparam & 0xffff), (uint32_t)(lparam >> 16));
 			break;
 
 		case WM_KEYDOWN:
@@ -176,10 +185,14 @@ auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 		ATOM class_atom = RegisterClass(&wc);
 		ATMA_ASSERT(class_atom);
 
-
-
 		HWND hwnd = CreateWindow((LPCTSTR)class_atom, window->caption().c_str(), WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0,0,window->width_in_pixels(),window->height_in_pixels(),0,0,hh, window.get());
 		window->hwnd = hwnd;
+
+#if 0
+		window->on_resize += [hwnd](atma::event_flow_t& fc, uint32_t width, uint32_t height) {
+			MoveWindow(hwnd, window->x_in_pixels(), window->y_in_pixels(), width, height, true);
+		};
+#endif
 	});
 
 	return 0;

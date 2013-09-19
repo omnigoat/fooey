@@ -19,7 +19,7 @@ namespace fooey {
 		window_t(properties::captioned_t::caption_t const& caption, uint32_t width, uint32_t height);
 		
 		auto set_visible(bool) -> void;
-
+		
 		// events atma
 		atma::event_t<> on_minimise;
 		atma::event_t<> on_maximise;
@@ -29,6 +29,9 @@ namespace fooey {
 
 		//
 		key_state_t key_state;
+
+
+		auto drawable_region() const -> atma::math::vector2i;
 
 		HWND hwnd;
 

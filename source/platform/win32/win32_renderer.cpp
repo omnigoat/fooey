@@ -40,19 +40,20 @@ private:
 
 static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-	//auto now = std::chrono::high_resolution_clock::now();
+	// on window creation, set the longptr handle
+	if (msg == WM_CREATE) {
+		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)((CREATESTRUCT*)lparam)->lpCreateParams);
+		return 0;
+	}
 
 	auto widget = (widget_t*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 	auto window = dynamic_cast<window_t*>(widget);
 	
 	atma::event_flow_t fc;
 
+	
 	switch (msg)
 	{
-		case WM_CREATE:
-			SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)((CREATESTRUCT*)lparam)->lpCreateParams);
-			break;
-
 		case WM_SYSCOMMAND:
 		{
 			switch (wparam)
@@ -187,12 +188,6 @@ auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 
 		HWND hwnd = CreateWindow((LPCTSTR)class_atom, window->caption().c_str(), WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0,0,window->width_in_pixels(),window->height_in_pixels(),0,0,hh, window.get());
 		window->hwnd = hwnd;
-
-#if 0
-		window->on_resize += [hwnd](atma::event_flow_t& fc, uint32_t width, uint32_t height) {
-			MoveWindow(hwnd, window->x_in_pixels(), window->y_in_pixels(), width, height, true);
-		};
-#endif
 	});
 
 	return 0;

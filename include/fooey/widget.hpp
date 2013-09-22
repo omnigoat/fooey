@@ -33,24 +33,22 @@ namespace fooey {
 	struct widget_group_t;
 	template <typename> struct widget_ptr_t;
 	typedef widget_ptr_t<widget_t> widget_ptr;
+	typedef std::weak_ptr<widget_t> widget_wptr;
 
-
-	enum class event_t
+	struct widget_event_t
 	{
-		minimise,
-		maximise,
-		restore,
-		close
+		widget_wptr target;
 	};
-	
+
+
 	//======================================================================
 	// basic widget
 	//======================================================================
 	struct widget_t
 	{
 		typedef std::vector<widget_ptr> children_t;
-		typedef std::pair<std::chrono::high_resolution_clock::time_point, event_t> queued_event_t;
-		typedef atma::lockfree::queue_t<queued_event_t> event_queue_t;
+		//typedef std::pair<std::chrono::high_resolution_clock::time_point, event_t> queued_event_t;
+		//typedef atma::lockfree::queue_t<queued_event_t> event_queue_t;
 
 		widget_t();
 		widget_t(uint32_t width, uint32_t height);
@@ -59,10 +57,10 @@ namespace fooey {
 		auto width_in_pixels() const -> uint32_t { return width_; }
 		auto height_in_pixels() const -> uint32_t { return height_; }
 		auto children() const -> children_t const& { return children_; }
-		auto queued_events() -> event_queue_t&;
+		//auto queued_events() -> event_queue_t&;
 
 		auto add_child(widget_ptr const&) -> void;
-		auto queue_event(std::chrono::high_resolution_clock::time_point, event_t) -> void;
+		//auto queue_event(std::chrono::high_resolution_clock::time_point, event_t) -> void;
 
 	protected:
 		widget_t* parent_;
@@ -71,7 +69,7 @@ namespace fooey {
 
 	private:
 		// events
-		event_queue_t event_queue_;
+		//event_queue_t event_queue_;
 	};
 
 	auto operator , (widget_ptr const& lhs, widget_ptr const& rhs) -> widget_group_t;
@@ -85,6 +83,12 @@ namespace fooey {
 
 		explicit widget_ptr_t(T* x)
 		: backend_(x)
+		{
+		}
+
+		template <typename U>
+		explicit widget_ptr_t(std::shared_ptr<U> const& rhs)
+		: backend_(std::dynamic_pointer_cast<T>(rhs))
 		{
 		}
 
@@ -133,7 +137,12 @@ namespace fooey {
 			return *this;
 		}
 
-		auto get_backend() const -> std::shared_ptr<T> const& { return backend_; }
+		operator bool()
+		{
+			return !!backend_;
+		}
+
+		auto backend() const -> std::shared_ptr<T> const& { return backend_; }
 		auto get() const -> T* { return backend_.get(); }
 
 	private:

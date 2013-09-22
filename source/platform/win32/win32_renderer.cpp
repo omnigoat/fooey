@@ -42,36 +42,59 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 {
 	// on window creation, set the longptr handle
 	if (msg == WM_CREATE) {
-		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)((CREATESTRUCT*)lparam)->lpCreateParams);
+		std::cout << "WM_CREATE" << std::endl;
+		
+		auto weak_widget_raw = (widget_wptr*)((CREATESTRUCT*)lparam)->lpCreateParams;
+		ATMA_ASSERT(weak_widget_raw);
+		auto weak_widget = *weak_widget_raw;
+		auto widget = weak_widget.lock();
+		ATMA_ASSERT(widget);
+		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)weak_widget_raw);
+
+		auto window = window_ptr(widget);
+		if (window)
+			window->hwnd = hwnd;
 		return 0;
 	}
-
-	auto widget = (widget_t*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-	auto window = dynamic_cast<window_t*>(widget);
 	
+	// get widget pointer from longptr data
+	auto widget_raw = (widget_wptr*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+	if (!widget_raw) {
+		// these are the only messages allowed before WM_CREATE
+		ATMA_ASSERT_ONE_OF(msg, WM_GETMINMAXINFO, WM_NCCREATE, WM_NCCALCSIZE);
+		//std::cout << "default handling msg " << std::hex << msg << std::dec << std::endl;
+		return DefWindowProc(hwnd, msg, wparam, lparam);
+	}
+	
+	auto widget = widget_raw->lock();
+	auto window = std::dynamic_pointer_cast<window_t>(widget);
+	ATMA_ASSERT(widget);
+
 	atma::event_flow_t fc;
 
+	auto e = fooey::widget_event_t{widget_weak};
 	
 	switch (msg)
 	{
 		case WM_SYSCOMMAND:
 		{
+
 			switch (wparam)
 			{
 				case SC_MINIMIZE:
-					fc = window->on_minimise.fire();
+					fc = window->on_minimise.fire(e);
 					break;
 
 				case SC_MAXIMIZE:
-					fc = window->on_maximise.fire();
+					fc = window->on_maximise.fire(e);
 					break;
 
 				case SC_RESTORE:
-					fc = window->on_restore.fire();
+					fc = window->on_restore.fire(e);
 					break;
 
 				case SC_CLOSE:
-					fc = window->on_close.fire();
+					fc = window->on_close.fire(e);
 					break;
 			}
 			break;
@@ -81,7 +104,7 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 		case WM_SIZING:
 		{
 			auto k = (LPRECT)lparam;
-			fc = window->on_resize.fire(k->right - k->left, k->bottom - k->top);
+			fc = window->on_resize.fire(e, k->right - k->left, k->bottom - k->top);
 			break;
 		}
 #endif
@@ -99,9 +122,6 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 			break;
 	}
 
-	if (fc.is_prevented())
-		return 0;
-	
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
@@ -158,7 +178,7 @@ auto win32_renderer_t::add_window(window_ptr const& window) -> void
 {
 	HWND hwnd = build_win32_window(window);
 
-	mapped_hwnds_[hwnd] = window;
+	//mapped_hwnds_[hwnd] = window;
 }
 
 
@@ -186,8 +206,14 @@ auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 		ATOM class_atom = RegisterClass(&wc);
 		ATMA_ASSERT(class_atom);
 
-		HWND hwnd = CreateWindow((LPCTSTR)class_atom, window->caption().c_str(), WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0,0,window->width_in_pixels(),window->height_in_pixels(),0,0,hh, window.get());
-		window->hwnd = hwnd;
+		// dynamically allocate a weak_ptr for this window
+		auto wptr = new widget_wptr(window.backend());
+
+		HWND hwnd = CreateWindow((LPCTSTR)class_atom, window->caption().c_str(), WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+			0,0,window->width_in_pixels(),window->height_in_pixels(),0,0,hh,
+			wptr);
+
+		ATMA_ENSURE(hwnd);
 	});
 
 	return 0;

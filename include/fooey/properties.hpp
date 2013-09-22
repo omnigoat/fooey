@@ -50,7 +50,7 @@ namespace properties {
 	//======================================================================
 	// captioned
 	//======================================================================
-	struct captioned_t : virtual property_t
+	struct captioned_t //: virtual property_t
 	{
 		typedef std::string caption_t;
 
@@ -65,7 +65,7 @@ namespace properties {
 		
 		auto set_caption(caption_t const& caption) -> void { 
 			caption_ = caption;
-			trigger_change(event_t::caption_changed);
+			//trigger_change(event_t::caption_changed);
 		}
 
 	private:

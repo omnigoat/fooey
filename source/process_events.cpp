@@ -2,6 +2,7 @@
 
 #include <algorithm>
 
+#if 0
 using namespace fooey;
 
 typedef std::tuple<
@@ -39,20 +40,21 @@ auto fooey::process_events(widget_ptr const& x) -> void
 		{
 			// window-only events
 			case event_t::minimise:
-				std::static_pointer_cast<fooey::window_t>(std::get<2>(x).get_backend())->on_minimise.fire();
+				std::static_pointer_cast<fooey::window_t>(std::get<2>(x).backend())->on_minimise.fire();
 				break;
 
 			case event_t::maximise:
-				std::static_pointer_cast<fooey::window_t>(std::get<2>(x).get_backend())->on_maximise.fire();
+				std::static_pointer_cast<fooey::window_t>(std::get<2>(x).backend())->on_maximise.fire();
 				break;
 
 			case event_t::restore:
-				std::static_pointer_cast<fooey::window_t>(std::get<2>(x).get_backend())->on_restore.fire();
+				std::static_pointer_cast<fooey::window_t>(std::get<2>(x).backend())->on_restore.fire();
 				break;
 
 			case event_t::close:
-				std::static_pointer_cast<fooey::window_t>(std::get<2>(x).get_backend())->on_close.fire();
+				std::static_pointer_cast<fooey::window_t>(std::get<2>(x).backend())->on_close.fire();
 				break;
 		}
 	}
 }
+#endif

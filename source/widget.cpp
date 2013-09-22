@@ -27,6 +27,7 @@ widget_t::~widget_t()
 {
 }
 
+#if 0
 auto widget_t::queued_events() -> event_queue_t&
 {
 	return event_queue_;
@@ -36,6 +37,7 @@ auto widget_t::queue_event(widget_t::queued_event_t::first_type time, widget_t::
 {
 	event_queue_.push(std::make_pair(time, msg));
 }
+#endif
 
 auto fooey::operator , (widget_ptr const& lhs, widget_ptr const& rhs) -> widget_group_t
 {

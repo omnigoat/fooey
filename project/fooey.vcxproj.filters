@@ -38,6 +38,9 @@
     <ClInclude Include="..\include\fooey\keys.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\fooey\event.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\widget.cpp">

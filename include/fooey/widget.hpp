@@ -8,6 +8,7 @@
 #include <initializer_list>
 #include <chrono>
 #include <atma/lockfree/queue.hpp>
+#include <fooey/event.hpp>
 //======================================================================
 namespace fooey {
 //======================================================================
@@ -44,7 +45,7 @@ namespace fooey {
 	//======================================================================
 	// basic widget
 	//======================================================================
-	struct widget_t
+	struct widget_t : event_handler_t
 	{
 		typedef std::vector<widget_ptr> children_t;
 		//typedef std::pair<std::chrono::high_resolution_clock::time_point, event_t> queued_event_t;

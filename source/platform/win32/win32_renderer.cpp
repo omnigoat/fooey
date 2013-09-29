@@ -38,37 +38,16 @@ private:
 	mapped_hwnds_t mapped_hwnds_;
 };
 
-static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-	// on window creation, set the longptr handle
-	if (msg == WM_CREATE) {
-		std::cout << "WM_CREATE" << std::endl;
-		
-		auto weak_widget_raw = (widget_wptr*)((CREATESTRUCT*)lparam)->lpCreateParams;
-		ATMA_ASSERT(weak_widget_raw);
-		auto weak_widget = *weak_widget_raw;
-		auto widget = weak_widget.lock();
-		ATMA_ASSERT(widget);
-		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)weak_widget_raw);
-
-		auto window = window_ptr(widget);
-		if (window)
-			window->hwnd = hwnd;
-		return 0;
-	}
-	
 	// get widget pointer from longptr data
 	auto widget_raw = (widget_wptr*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-	if (!widget_raw) {
-		// these are the only messages allowed before WM_CREATE
-		ATMA_ASSERT_ONE_OF(msg, WM_GETMINMAXINFO, WM_NCCREATE, WM_NCCALCSIZE);
-		//std::cout << "default handling msg " << std::hex << msg << std::dec << std::endl;
-		return DefWindowProc(hwnd, msg, wparam, lparam);
-	}
-	
-	auto widget = widget_raw->lock();
+	ATMA_ASSERT(widget_raw);
+	auto widget_weak = *widget_raw;
+	auto widget = widget_weak.lock();
 	auto window = std::dynamic_pointer_cast<window_t>(widget);
 	ATMA_ASSERT(widget);
+
 
 	atma::event_flow_t fc;
 
@@ -125,7 +104,29 @@ static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
+LRESULT CALLBACK wnd_proc_setup(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+	// on window creation, set the longptr handles for user-data, and
+	// use the *actual* wndproc after we safely know the user-data will be present.
+	if (msg == WM_CREATE) {
+		std::cout << "WM_CREATE" << std::endl;
 
+		auto weak_widget_raw = (widget_wptr*)((CREATESTRUCT*)lparam)->lpCreateParams;
+		ATMA_ASSERT(weak_widget_raw);
+		auto weak_widget = *weak_widget_raw;
+		auto widget = weak_widget.lock();
+		ATMA_ASSERT(widget);
+		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)weak_widget_raw);
+
+		auto window = window_ptr(widget);
+		if (window)
+			window->hwnd = hwnd;
+
+		SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG)&wnd_proc);
+	}
+
+	return DefWindowProc(hwnd, msg, wparam, lparam);
+}
 
 //======================================================================
 // system_renderer()
@@ -193,7 +194,7 @@ auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 		ATMA_ASSERT(win32_classnames[win32_classname_idx]);
 
 		auto wc = WNDCLASS{
-			0, &wnd_proc,
+			0, &wnd_proc_setup,
 			0, 0,
 			hh,
 			nullptr,

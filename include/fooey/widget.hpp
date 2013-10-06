@@ -60,11 +60,12 @@ namespace fooey {
 		auto children() const -> children_t const& { return children_; }
 		//auto queued_events() -> event_queue_t&;
 
+		auto set_parent(widget_wptr const&) -> void;
 		auto add_child(widget_ptr const&) -> void;
 		//auto queue_event(std::chrono::high_resolution_clock::time_point, event_t) -> void;
 
 	protected:
-		widget_t* parent_;
+		widget_wptr parent_;
 		children_t children_;
 		uint32_t left_, top_, width_, height_;
 

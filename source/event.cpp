@@ -4,6 +4,26 @@
 using namespace fooey;
 using fooey::event_handler_t;
 
+event_handler_t::event_handler_t()
+: parent_handler_()
+{
+}
+
+event_handler_t::event_handler_t(event_handler_t* parent_handler)
+: parent_handler_(parent_handler)
+{
+}
+
+auto event_handler_t::add_child_handler(event_handler_t* child) -> void
+{
+	return children_handlers_.push_back(child);
+}
+
+auto event_handler_t::set_parent_handler(event_handler_t* parent) -> void
+{
+	parent_handler_ = parent;
+}
+
 auto event_handler_t::insert(namedesc_t const& desc, fn_t const& fn) -> void
 {
 	mapped_fns_.insert({desc, fn});

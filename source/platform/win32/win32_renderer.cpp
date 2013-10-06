@@ -13,6 +13,15 @@ using namespace fooey;
 // 
 //======================================================================
 
+struct win32_root_widget_t : fooey::widget_t
+{
+	win32_root_widget_t()
+	{
+		on("close", [](fooey::event_t&) {
+			std::cout << "bam, close" << std::endl;
+		});
+	}
+};
 
 
 //======================================================================
@@ -36,7 +45,10 @@ private:
 
 	typedef std::map<HWND, widget_ptr> mapped_hwnds_t;
 	mapped_hwnds_t mapped_hwnds_;
+
+	widget_ptr root_widget_;
 };
+
 
 LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -73,7 +85,8 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 					break;
 
 				case SC_CLOSE:
-					fc = window->on_close.fire(e);
+					//fc = window->on_close.fire(e);
+					window->fire("close");
 					break;
 			}
 			break;
@@ -132,8 +145,10 @@ LRESULT CALLBACK wnd_proc_setup(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 // system_renderer()
 //======================================================================
 win32_renderer_t::win32_renderer_t()
-	: running_(true)
+: root_widget_(new win32_root_widget_t), running_(true)
 {
+	
+
 	wndproc_thread_ = std::thread([=] {
 		while (running_)
 		{
@@ -178,8 +193,10 @@ auto fooey::system_renderer() -> fooey::renderer_ptr
 auto win32_renderer_t::add_window(window_ptr const& window) -> void
 {
 	HWND hwnd = build_win32_window(window);
-
+	//window->set_parent_handler()
 	//mapped_hwnds_[hwnd] = window;
+	root_widget_->add_child(window);
+	window->set_parent(fooey::widget_wptr(root_widget_.backend()));
 }
 
 

@@ -22,8 +22,19 @@ namespace fooey {
 	struct event_t
 	{
 		virtual ~event_t();
+		auto is_propagating() const -> bool { return propagate_; }
+		auto set_propagating(bool b) -> void { propagate_ = b; }
+	private:
+		bool propagate_;
 	};
 
+	enum class event_traversal_t
+	{
+		none,
+		upwards,
+		downwards,
+		up_down
+	};
 
 	
 	struct event_handler_t
@@ -36,11 +47,33 @@ namespace fooey {
 			insert(namedesc_t(name), homogenize(fn));
 		}
 
-		template <typename T>
-		auto fire(std::string const& name, T& e) -> void
+		template <typename T = event_t>
+		auto fire(std::string const& name, T& e = event_t(), event_traversal_t t = event_traversal_t::upwards) -> void
 		{
 			fire_impl(name, static_cast<event_t&>(e));
+
+			if (t == event_traversal_t::upwards)
+			{
+				if (e.is_propagating() && parent_handler_)
+					parent_handler_->fire(name, e, t);
+			}
+			else if (t == event_traversal_t::downwards)
+			{
+				for (auto const& x : children_handlers_)
+				{
+					ATMA_ASSERT(x);
+					x->fire(name, e, t);
+				}
+			}
 		}
+
+
+	protected:
+		event_handler_t();
+		event_handler_t(event_handler_t*);
+
+		auto add_child_handler(event_handler_t*) -> void;
+		auto set_parent_handler(event_handler_t*) -> void;
 
 	private:
 		typedef std::function<void(event_t&)> fn_t;
@@ -62,6 +95,9 @@ namespace fooey {
 		auto insert(namedesc_t const&, fn_t const&) -> void;
 		
 		std::multimap<namedesc_t, fn_t> mapped_fns_;
+		event_handler_t* parent_handler_;
+		typedef std::vector<event_handler_t*> children_t;
+		children_t children_handlers_;
 	};
 
 	struct event_handler_t::namedesc_t

@@ -14,7 +14,8 @@ using fooey::widget_group_t;
 // widget_t
 //======================================================================
 widget_t::widget_t()
-	: width_(), height_(), left_(), top_()
+	: event_handler_t(),
+	  width_(), height_(), left_(), top_()
 {
 }
 
@@ -25,6 +26,21 @@ widget_t::widget_t(uint32_t width, uint32_t height)
 
 widget_t::~widget_t()
 {
+}
+
+auto widget_t::set_parent(widget_wptr const& parent) -> void
+{
+	auto L = parent.lock();
+	ATMA_ASSERT(L);
+
+	parent_ = parent;
+	set_parent_handler(L.get());
+}
+
+auto widget_t::add_child(widget_ptr const& child) -> void
+{
+	children_.push_back(child);
+	add_child_handler(child.get());
 }
 
 #if 0

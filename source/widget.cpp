@@ -28,6 +28,7 @@ widget_t::~widget_t()
 {
 }
 
+/*
 auto widget_t::set_parent(widget_wptr const& parent) -> void
 {
 	auto L = parent.lock();
@@ -36,11 +37,13 @@ auto widget_t::set_parent(widget_wptr const& parent) -> void
 	parent_ = parent;
 	set_parent_handler(L.get());
 }
+*/
 
 auto widget_t::add_child(widget_ptr const& child) -> void
 {
 	children_.push_back(child);
 	add_child_handler(child.get());
+	child->parent_ = shared_from_this();
 }
 
 #if 0

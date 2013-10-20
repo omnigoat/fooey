@@ -16,9 +16,3 @@ window_t::window_t(properties::captioned_t::caption_t const& c, uint32_t width, 
 window_t::~window_t()
 {
 }
-
-auto fooey::map_basic_window_events(window_ptr const& wnd) -> void
-{
-}
-
-

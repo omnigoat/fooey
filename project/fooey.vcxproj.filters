@@ -21,6 +21,12 @@
     <Filter Include="source\widgets">
       <UniqueIdentifier>{4f311e9f-c9c0-431d-855e-947d64e10371}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\platform">
+      <UniqueIdentifier>{aad8f5c4-c7fd-445d-84bb-fc557c043070}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\platform\win32">
+      <UniqueIdentifier>{bde80cb6-5d01-44dd-b233-90da4075ee96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\fooey\fooey.hpp">
@@ -41,6 +47,9 @@
     <ClInclude Include="..\include\fooey\event.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\fooey\platform\win32\widget.hpp">
+      <Filter>include\platform\win32</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\widget.cpp">
@@ -56,6 +65,9 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\source\keys.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\event.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

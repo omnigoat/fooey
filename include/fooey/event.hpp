@@ -24,9 +24,11 @@ namespace fooey {
 		virtual ~event_t();
 		auto is_propagating() const -> bool { return propagate_; }
 		auto set_propagating(bool b) -> void { propagate_ = b; }
+
 	private:
 		bool propagate_;
 	};
+
 
 	enum class event_traversal_t
 	{
@@ -85,7 +87,7 @@ namespace fooey {
 			return [fn](event_t& e) -> void {
 				typedef typename std::decay_t<typename atma::xtm::function_traits<T>::arg<0>::type> T2;
 				auto nep = dynamic_cast<T2*>(&e);
-				ATMA_ASSERT(nep);
+				ATMA_ASSERT_MSG(nep, "bad event type");
 				fn(*nep);
 			};
 		}

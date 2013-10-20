@@ -9,15 +9,33 @@
 #include <chrono>
 #include <atma/lockfree/queue.hpp>
 #include <fooey/event.hpp>
+#include <atma/intrusive_ptr.hpp>
 //======================================================================
 namespace fooey {
 //======================================================================
 	
+	struct widget_t;
+	typedef std::shared_ptr<widget_t> widget_ptr;
+	typedef std::weak_ptr<widget_t> widget_wptr;
+
+//======================================================================
+} // namespace fooey
+//======================================================================
+#include <fooey/platform/win32/widget.hpp>
+//======================================================================
+namespace fooey {
+//======================================================================
+	
+	// forward declares
+	struct widget_group_t;
+	template <typename> struct widget_builder_t;
+
 	struct ux_t
 	{
 		enum type_t {
-			percentage,
-			exact
+			px,
+			pc,
+			pt
 		};
 
 		type_t type;
@@ -26,103 +44,61 @@ namespace fooey {
 		ux_t() : type(), value() {}
 	};
 
+	template <typename R, typename C, typename... Args> void match_fn(R (C::*)(Args...)) {}
+	template <typename R, typename C, typename... Args> void match_fn_const(R (C::*)(Args...) const) {}
 
-	// a widget is an on-screen element that is extensible.
-	// a.k.a: it is not for things which are merely concepts. concrete things only please.
-	struct widget_t;
-	
-	struct widget_group_t;
-	template <typename> struct widget_ptr_t;
-	typedef widget_ptr_t<widget_t> widget_ptr;
-	typedef std::weak_ptr<widget_t> widget_wptr;
-
-	struct widget_event_t
+	inline void match_widget()
 	{
-		widget_wptr target;
-	};
+		match_fn_const(&widget_t::children);
 
+		match_fn(&widget_t::add_child);
+
+		static_assert( std::is_base_of<std::enable_shared_from_this<widget_t>, widget_t>::value, 
+			"widget_t needs to derive from enable_shared_from_this" );
+	}
+
+
+	
 
 	//======================================================================
-	// basic widget
+	// widget_builder_t
+	// ------------------
 	//======================================================================
-	struct widget_t : event_handler_t
-	{
-		typedef std::vector<widget_ptr> children_t;
-		//typedef std::pair<std::chrono::high_resolution_clock::time_point, event_t> queued_event_t;
-		//typedef atma::lockfree::queue_t<queued_event_t> event_queue_t;
-
-		widget_t();
-		widget_t(uint32_t width, uint32_t height);
-		virtual ~widget_t();
-
-		auto width_in_pixels() const -> uint32_t { return width_; }
-		auto height_in_pixels() const -> uint32_t { return height_; }
-		auto children() const -> children_t const& { return children_; }
-		//auto queued_events() -> event_queue_t&;
-
-		auto set_parent(widget_wptr const&) -> void;
-		auto add_child(widget_ptr const&) -> void;
-		//auto queue_event(std::chrono::high_resolution_clock::time_point, event_t) -> void;
-
-	protected:
-		widget_wptr parent_;
-		children_t children_;
-		uint32_t left_, top_, width_, height_;
-
-	private:
-		// events
-		//event_queue_t event_queue_;
-	};
-
-	auto operator , (widget_ptr const& lhs, widget_ptr const& rhs) -> widget_group_t;
-	
 	template <typename T>
-	struct widget_ptr_t
+	struct widget_builder_t
 	{
-		widget_ptr_t()
+		widget_builder_t()
 		{
 		}
 
-		explicit widget_ptr_t(T* x)
+		explicit widget_builder_t(T* x)
 		: backend_(x)
 		{
 		}
 
 		template <typename U>
-		explicit widget_ptr_t(std::shared_ptr<U> const& rhs)
+		explicit widget_builder_t(std::shared_ptr<U> const& rhs)
 		: backend_(std::dynamic_pointer_cast<T>(rhs))
 		{
 		}
 
-		widget_ptr_t(widget_ptr_t const& rhs)
+		widget_builder_t(widget_builder_t const& rhs)
 		: backend_(rhs.backend_)
 		{
 		}
 
 		template <typename U>
-		widget_ptr_t(widget_ptr_t<U> const& rhs)
+		widget_builder_t(widget_builder_t<U> const& rhs)
 		: backend_(rhs.backend_)
 		{
 		}
 
-		widget_ptr_t(widget_ptr_t&& rhs)
+		widget_builder_t(widget_builder_t&& rhs)
 		: backend_(std::move(rhs.backend_))
 		{
 		}
 
-		auto operator = (widget_ptr_t const& rhs)-> widget_ptr_t&
-		{
-			backend_ = rhs.backend_;
-			return *this;
-		}
-
-		auto operator = (widget_ptr_t&& rhs) -> widget_ptr_t&
-		{
-			std::swap(backend_, rhs.backend_);
-			return *this;
-		}
-		
-		auto operator * () const -> widget_ptr_t& { return *backend_; }
+		auto operator * () const -> widget_builder_t& { return *backend_; }
 		auto operator -> () const -> T* { return backend_.get(); }
 
 
@@ -147,22 +123,29 @@ namespace fooey {
 		auto backend() const -> std::shared_ptr<T> const& { return backend_; }
 		auto get() const -> T* { return backend_.get(); }
 
+		template <typename Y>
+		operator std::shared_ptr<Y>() const
+		{
+			return std::static_pointer_cast<Y>(backend_);
+		}
+
 	private:
 		std::shared_ptr<T> backend_;
 
 		template <typename U>
-		friend struct widget_ptr_t;
+		friend struct widget_builder_t;
 	};
 
 	template <typename T>
-	inline auto operator < (widget_ptr_t<T> const& lhs, widget_ptr_t<T> const& rhs) -> bool
+	inline auto operator < (widget_builder_t<T> const& lhs, widget_builder_t<T> const& rhs) -> bool
 	{
 		return lhs.get() < rhs.get();
 	}
 
 
 	//======================================================================
-	// used for building structure
+	// widget_group_t
+	// ----------------
 	//======================================================================
 	struct widget_group_t
 	{
@@ -182,9 +165,24 @@ namespace fooey {
 
 	auto operator , (widget_group_t&, widget_ptr const&) -> widget_group_t&;
 
-
+	auto operator , (widget_ptr const& lhs, widget_ptr const& rhs) -> widget_group_t;
 
 	
+	struct resize_event_t : event_t
+	{
+		resize_event_t(widget_wptr const& target, uint32_t width, uint32_t height)
+			: width_(width), height_(height)
+		{
+		}
+
+		auto target() const -> widget_wptr { return target_; }
+		auto width() const -> uint32_t { return width_; }
+		auto height() const -> uint32_t { return height_; }
+
+	private:
+		widget_wptr target_;
+		uint32_t width_, height_;
+	};
 
 
 	

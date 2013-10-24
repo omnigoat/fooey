@@ -1,20 +1,20 @@
 #ifndef FOOEY_PLATFORM_WIN32_WIDGET_HPP
 #define FOOEY_PLATFORM_WIN32_WIDGET_HPP
 //======================================================================
-#include <memory>
-#include <string>
-#include <set>
 #include <vector>
-#include <initializer_list>
-#include <chrono>
-#include <atma/lockfree/queue.hpp>
+#include <memory>
 #include <fooey/event.hpp>
-#include <atma/config/platform.hpp>
+#include <atma/enable_multiple_shared_from_this.hpp>
 //======================================================================
 namespace fooey {
 //======================================================================
 	
-	struct widget_t : std::enable_shared_from_this<widget_t>, event_handler_t
+	struct widget_t;
+	typedef std::shared_ptr<widget_t> widget_ptr;
+	typedef std::weak_ptr<widget_t> widget_wptr;
+
+
+	struct widget_t : virtual atma::enable_multiple_shared_from_this, event_handler_t
 	{
 		typedef std::vector<widget_ptr> children_t;
 		
@@ -39,7 +39,7 @@ namespace fooey {
 		HWND hwnd_;
 	};
 		
-
+	
 //======================================================================
 } // fooey
 //======================================================================

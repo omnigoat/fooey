@@ -111,6 +111,3 @@ auto fooey::operator < (event_handler_t::namedesc_t const& lhs, event_handler_t:
 
 	return false;
 }
-
-
-fooey::event_t::~event_t() {}

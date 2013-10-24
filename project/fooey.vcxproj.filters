@@ -21,11 +21,17 @@
     <Filter Include="source\widgets">
       <UniqueIdentifier>{4f311e9f-c9c0-431d-855e-947d64e10371}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\platform">
-      <UniqueIdentifier>{aad8f5c4-c7fd-445d-84bb-fc557c043070}</UniqueIdentifier>
+    <Filter Include="include\events">
+      <UniqueIdentifier>{35db3940-68a4-4a4d-8faa-30d976a0a9fc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\platform\win32">
+    <Filter Include="platform">
+      <UniqueIdentifier>{5bdbf144-8ba7-46ee-a81a-414e7dfea35e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\win32">
       <UniqueIdentifier>{bde80cb6-5d01-44dd-b233-90da4075ee96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\win32\events">
+      <UniqueIdentifier>{ca66a257-0cd3-4405-80e8-e99221c3c559}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -48,7 +54,13 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\fooey\platform\win32\widget.hpp">
-      <Filter>include\platform\win32</Filter>
+      <Filter>platform\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\fooey\platform\win32\events\resize.hpp">
+      <Filter>platform\win32\events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\fooey\events\resize.hpp">
+      <Filter>include\events</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

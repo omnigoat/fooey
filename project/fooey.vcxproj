@@ -79,8 +79,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\include\fooey\event.hpp" />
+    <ClInclude Include="..\include\fooey\events\resize.hpp" />
     <ClInclude Include="..\include\fooey\fooey.hpp" />
     <ClInclude Include="..\include\fooey\keys.hpp" />
+    <ClInclude Include="..\include\fooey\platform\win32\events\resize.hpp" />
     <ClInclude Include="..\include\fooey\platform\win32\widget.hpp" />
     <ClInclude Include="..\include\fooey\properties.hpp" />
     <ClInclude Include="..\include\fooey\widget.hpp" />

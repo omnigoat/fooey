@@ -43,7 +43,7 @@ auto widget_t::add_child(widget_ptr const& child) -> void
 {
 	children_.push_back(child);
 	add_child_handler(child.get());
-	child->parent_ = shared_from_this();
+	child->parent_ = shared_from_this<widget_t>();
 }
 
 #if 0

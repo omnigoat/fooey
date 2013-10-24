@@ -3,11 +3,37 @@
 
 #include <atma/config/platform.hpp>
 #include <atma/lockfree/queue.hpp>
-
+#include <fooey/events/resize.hpp>
 #include <map>
 #include <thread>
 
 using namespace fooey;
+
+namespace
+{
+	using events::resizing_edge;
+
+	WPARAM resizing_edge_to_wparam[] =
+	{
+		0, WMSZ_LEFT, WMSZ_RIGHT, 0,
+		WMSZ_TOP, WMSZ_TOPLEFT, WMSZ_TOPRIGHT, 0,
+		WMSZ_BOTTOM, WMSZ_BOTTOMLEFT, WMSZ_BOTTOMRIGHT, 0
+	};
+
+	events::resizing_edge wparam_to_resizing_edge[] =
+	{
+		resizing_edge::none,
+		resizing_edge::left,
+		resizing_edge::right,
+		resizing_edge::top,
+		resizing_edge::top_left,
+		resizing_edge::top_right,
+		resizing_edge::bottom,
+		resizing_edge::bottom_left,
+		resizing_edge::bottom_right
+	};
+}
+
 
 //======================================================================
 // 
@@ -16,13 +42,13 @@ struct win32_root_widget_t : fooey::widget_t
 {
 	win32_root_widget_t()
 	{
-		on("close", [](fooey::resize_event_t& e) {
-			auto widget = e.target().lock();
+		on("close", [](fooey::events::resize_t& e) {
+			auto widget = std::dynamic_pointer_cast<widget_t>(e.origin().lock());
 			if (!widget)
 				return;
 
 			
-			//DefWindowProc(widget->platform_handle().as<win32_widget_t>()->hwnd(), WM_SIZING, )
+			DefWindowProc(widget->hwnd(), WM_SIZING, resizing_edge_to_wparam[(int)e.edge()], (LPARAM)e.rect());
 		});
 	}
 };
@@ -75,17 +101,14 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			switch (wparam)
 			{
 				case SC_MINIMIZE:
-					//fc = window->on_minimise.fire(e);
 					window->fire("minimise");
 					break;
 
 				case SC_MAXIMIZE:
-					//fc = window->on_maximise.fire(e);
 					window->fire("maximise");
 					break;
 
 				case SC_RESTORE:
-					//fc = window->on_restore.fire(e);
 					window->fire("restore");
 					break;
 
@@ -100,9 +123,7 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		case WM_SIZING:
 		{
 			auto k = (LPRECT)lparam;
-			//fc = window->on_resize.fire(e, k->right - k->left, k->bottom - k->top);
-			//break;
-			window->fire("resize", resize_event_t(widget_weak, k->right - k->left, k->bottom - k->top));
+			window->fire("resize", events::resize_t(widget_weak, wparam_to_resizing_edge[wparam], k));
 		}
 #endif
 

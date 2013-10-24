@@ -1,27 +1,11 @@
 #ifndef FOOEY_WIDGET_HPP
 #define FOOEY_WIDGET_HPP
 //======================================================================
-#include <memory>
-#include <string>
-#include <set>
-#include <vector>
-#include <initializer_list>
-#include <chrono>
-#include <atma/lockfree/queue.hpp>
-#include <fooey/event.hpp>
-#include <atma/intrusive_ptr.hpp>
+#include <atma/config/platform.hpp>
 //======================================================================
-namespace fooey {
-//======================================================================
-	
-	struct widget_t;
-	typedef std::shared_ptr<widget_t> widget_ptr;
-	typedef std::weak_ptr<widget_t> widget_wptr;
-
-//======================================================================
-} // namespace fooey
-//======================================================================
-#include <fooey/platform/win32/widget.hpp>
+#ifdef ATMA_PLATFORM_WIN32
+#	include <fooey/platform/win32/widget.hpp>
+#endif
 //======================================================================
 namespace fooey {
 //======================================================================
@@ -33,9 +17,9 @@ namespace fooey {
 	struct ux_t
 	{
 		enum type_t {
-			px,
-			pc,
-			pt
+			px, // pixels
+			pc, // percentage
+			pt  // points
 		};
 
 		type_t type;
@@ -53,8 +37,8 @@ namespace fooey {
 
 		match_fn(&widget_t::add_child);
 
-		static_assert( std::is_base_of<std::enable_shared_from_this<widget_t>, widget_t>::value, 
-			"widget_t needs to derive from enable_shared_from_this" );
+	//	static_assert( std::is_base_of<std::enable_shared_from_this<widget_t>, widget_t>::value, 
+	//		"widget_t needs to derive from enable_shared_from_this" );
 	}
 
 
@@ -166,25 +150,6 @@ namespace fooey {
 	auto operator , (widget_group_t&, widget_ptr const&) -> widget_group_t&;
 
 	auto operator , (widget_ptr const& lhs, widget_ptr const& rhs) -> widget_group_t;
-
-	
-	struct resize_event_t : event_t
-	{
-		resize_event_t(widget_wptr const& target, uint32_t width, uint32_t height)
-			: width_(width), height_(height)
-		{
-		}
-
-		auto target() const -> widget_wptr { return target_; }
-		auto width() const -> uint32_t { return width_; }
-		auto height() const -> uint32_t { return height_; }
-
-	private:
-		widget_wptr target_;
-		uint32_t width_, height_;
-	};
-
-
 	
 
 //======================================================================

@@ -10,6 +10,7 @@
 #include <atma/lockfree/queue.hpp>
 #include <atma/xtm/function.hpp>
 #include <atma/enable_multiple_shared_from_this.hpp>
+#include <atma/utf/utf8_string_range.hpp>
 #include <mutex>
 #include <functional>
 #include <vector>
@@ -160,11 +161,11 @@ namespace fooey {
 		auto operator = (namedesc_t const&) -> void = delete;
 
 	private:
-		typedef std::pair<std::string::const_iterator, std::string::const_iterator> section_t;
+		//typedef std::pair<std::string::const_iterator, std::string::const_iterator> section_t;
 
 		std::string base_;
-		section_t id_;
-		std::vector<section_t> classes_;
+		atma::utf8_string_range_t id_;
+		std::vector<atma::utf8_string_range_t> classes_;
 
 		friend auto operator < (namedesc_t const& lhs, namedesc_t const& rhs) -> bool;
 

@@ -1,5 +1,6 @@
 #include <fooey/event.hpp>
 #include <algorithm>
+#include <atma/string.hpp>
 
 using namespace fooey;
 using fooey::event_handler_t;
@@ -38,11 +39,13 @@ auto event_handler_t::fire_impl(std::string const& name, event_t& e) -> void
 	{
 		auto const& X = i->first;
 
+		/*
 		if (std::includes(X.classes_.begin(), X.classes_.end(), N.classes_.begin(), N.classes_.end(),
 			[](namedesc_t::section_t const& lhs, namedesc_t::section_t const& rhs) -> bool {
 				return std::lexicographical_compare(lhs.first, lhs.second, rhs.first, rhs.second);
 			}))
 			i->second(e);
+		*/
 	}
 }
 
@@ -55,7 +58,7 @@ event_handler_t::namedesc_t::namedesc_t(std::string const& str)
 		for (; i != base_.end(); ++i)
 			if (*i == '.')
 				break;
-		id_ = section_t(base_.begin(), i);
+		id_ = atma::utf8_string_range_t(base_.begin(), i);
 	}
 
 	// classes

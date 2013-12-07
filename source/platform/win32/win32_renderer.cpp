@@ -123,7 +123,7 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		case WM_SIZING:
 		{
 			auto k = (LPRECT)lparam;
-			window->fire("resize", events::resize_t(widget_weak, wparam_to_resizing_edge[wparam], k));
+			window->fire("resize.all.the.great.things", events::resize_t(widget_weak, wparam_to_resizing_edge[wparam], k));
 		}
 #endif
 

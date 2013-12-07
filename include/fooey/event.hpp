@@ -6,6 +6,7 @@
 #ifndef FOOEY_EVENT_HPP
 #define FOOEY_EVENT_HPP
 //=====================================================================
+#include <atma/string.hpp>
 #include <atma/assert.hpp>
 #include <atma/lockfree/queue.hpp>
 #include <atma/xtm/function.hpp>
@@ -90,13 +91,13 @@ namespace fooey {
 		virtual ~event_handler_t() {}
 
 		template <typename FN>
-		auto on(std::string const& name, FN fn) -> void
+		auto on(atma::string const& name, FN fn) -> void
 		{
 			insert(namedesc_t(name), homogenize(fn));
 		}
 
 		template <typename T = event_t>
-		auto fire(std::string const& name, T& e, event_traversal_t t = event_traversal_t::upwards) -> void
+		auto fire(atma::string const& name, T& e, event_traversal_t t = event_traversal_t::upwards) -> void
 		{
 			fire_impl(name, static_cast<event_t&>(e));
 
@@ -116,7 +117,7 @@ namespace fooey {
 		}
 
 		template <typename T = event_t>
-		auto fire(std::string const& name) -> void
+		auto fire(atma::string const& name) -> void
 		{
 			fire(name, event_t(shared_from_this<widget_t>()), event_traversal_t::upwards);
 		}
@@ -144,7 +145,7 @@ namespace fooey {
 			};
 		}
 
-		auto fire_impl(std::string const&, event_t&) -> void;
+		auto fire_impl(atma::string const&, event_t&) -> void;
 
 		auto insert(namedesc_t const&, fn_t const&) -> void;
 		
@@ -156,14 +157,14 @@ namespace fooey {
 
 	struct event_handler_t::namedesc_t
 	{
-		namedesc_t(std::string const&);
+		namedesc_t(atma::string const&);
 		namedesc_t(namedesc_t const&);
 		auto operator = (namedesc_t const&) -> void = delete;
 
 	private:
-		//typedef std::pair<std::string::const_iterator, std::string::const_iterator> section_t;
+		//typedef std::pair<atma::string::const_iterator, atma::string::const_iterator> section_t;
 
-		std::string base_;
+		atma::string base_;
 		atma::utf8_string_range_t id_;
 		std::vector<atma::utf8_string_range_t> classes_;
 

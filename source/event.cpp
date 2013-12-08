@@ -37,15 +37,10 @@ auto event_handler_t::fire_impl(atma::string const& name, event_t& e) -> void
 
 	for (auto i = R.first; i != R.second; ++i)
 	{
-		auto const& X = i->first;
+		auto const& x = i->first;
 
-		/*
-		if (std::includes(X.classes_.begin(), X.classes_.end(), N.classes_.begin(), N.classes_.end(),
-			[](namedesc_t::section_t const& lhs, namedesc_t::section_t const& rhs) -> bool {
-				return std::lexicographical_compare(lhs.first, lhs.second, rhs.first, rhs.second);
-			}))
+		if ( x.containing_match(N) )
 			i->second(e);
-		*/
 	}
 }
 
@@ -86,7 +81,15 @@ event_handler_t::namedesc_t::namedesc_t(namedesc_t const& rhs)
 		classes_.push_back( rebase_string_range(base_, rhs.base_, x) );
 }
 
+auto fooey::event_handler_t::namedesc_t::containing_match(namedesc_t const& rhs) const -> bool
+{
+	return std::includes(classes_.begin(), classes_.end(), rhs.classes_.begin(), rhs.classes_.end());
+}
+
+
 auto fooey::operator < (event_handler_t::namedesc_t const& lhs, event_handler_t::namedesc_t const& rhs) -> bool
 {
 	return lhs.id_ < rhs.id_;
 }
+
+

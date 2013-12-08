@@ -12,24 +12,29 @@ namespace events {
 	struct resize_t : event_t
 	{
 		resize_t(widget_wptr const& origin, resizing_edge edge, LPRECT rect)
-		: event_t(origin), edge_(edge), rect_(rect)
+		: event_t(origin), edge_(edge),
+		  left_(rect->left), right_(rect->right), top_(rect->top), bottom_(rect->bottom)
 		{
 		}
 
-		auto rect() const -> LPRECT { return rect_; }
 		auto edge() const -> resizing_edge { return edge_; }
 
-		auto left() const -> uint32_t { return rect_->left; }
-		auto right() const -> uint32_t { return rect_->right; }
-		auto top() const -> uint32_t { return rect_->top; }
-		auto bottom() const -> uint32_t { return rect_->bottom; }
+		auto left() const -> uint32_t { return left_; }
+		auto right() const -> uint32_t { return right_; }
+		auto top() const -> uint32_t { return top_; }
+		auto bottom() const -> uint32_t { return bottom_; }
 
-		auto width() const -> uint32_t { return rect_->right - rect_->left; }
-		auto height() const -> uint32_t { return rect_->bottom - rect_->top; }
+		auto width() const -> uint32_t {
+			return right_ - left_;
+		}
+
+		auto height() const -> uint32_t {
+			return bottom_ - top_;
+		}
 
 	private:
 		resizing_edge edge_;
-		LPRECT rect_;
+		uint32_t left_, right_, top_, bottom_;
 	};
 	
 //======================================================================

@@ -48,7 +48,7 @@ struct win32_root_widget_t : fooey::widget_t
 				return;
 
 			
-			DefWindowProc(widget->hwnd(), WM_SIZING, resizing_edge_to_wparam[(int)e.edge()], (LPARAM)e.rect());
+			//DefWindowProc(widget->hwnd(), WM_SIZING, resizing_edge_to_wparam[(int)e.edge()], (LPARAM)e.rect());
 		});
 	}
 };
@@ -119,13 +119,11 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			break;
 		}
 
-#if 1
 		case WM_SIZING:
 		{
 			auto k = (LPRECT)lparam;
-			window->fire("resize.all.the.great.things", events::resize_t(widget_weak, wparam_to_resizing_edge[wparam], k));
+			window->fire("resize", events::resize_t(widget_weak, wparam_to_resizing_edge[wparam], k));
 		}
-#endif
 
 		case WM_SIZE:
 			//fc = window->on_resize.fire((uint32_t)(lparam & 0xffff), (uint32_t)(lparam >> 16));
@@ -148,8 +146,7 @@ LRESULT CALLBACK wnd_proc_setup(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 	// on window creation, set the longptr handles for user-data, and
 	// use the *actual* wndproc after we safely know the user-data will be present.
 	if (msg == WM_CREATE) {
-		std::cout << "WM_CREATE" << std::endl;
-
+		
 		auto weak_widget_raw = (widget_wptr*)((CREATESTRUCT*)lparam)->lpCreateParams;
 		ATMA_ASSERT(weak_widget_raw);
 		auto weak_widget = *weak_widget_raw;
@@ -158,8 +155,8 @@ LRESULT CALLBACK wnd_proc_setup(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)weak_widget_raw);
 
 		auto window = std::dynamic_pointer_cast<window_t>(widget);
-		if (window)
-			window->set_hwnd(hwnd);
+		ATMA_ASSERT(window);
+		window->set_hwnd(hwnd);
 
 		SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG)&wnd_proc);
 	}

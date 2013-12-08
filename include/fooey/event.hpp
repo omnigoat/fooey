@@ -161,9 +161,10 @@ namespace fooey {
 		namedesc_t(namedesc_t const&);
 		auto operator = (namedesc_t const&) -> void = delete;
 
-	private:
-		//typedef std::pair<atma::string::const_iterator, atma::string::const_iterator> section_t;
+		// if we match rhs, but we're allowed to have extraneous classes
+		auto containing_match(namedesc_t const&) const -> bool;
 
+	private:
 		atma::string base_;
 		atma::utf8_string_range_t id_;
 		std::vector<atma::utf8_string_range_t> classes_;

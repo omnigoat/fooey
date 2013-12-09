@@ -19,22 +19,22 @@ namespace events {
 
 		auto edge() const -> resizing_edge { return edge_; }
 
-		auto left() const -> uint32_t { return left_; }
-		auto right() const -> uint32_t { return right_; }
-		auto top() const -> uint32_t { return top_; }
-		auto bottom() const -> uint32_t { return bottom_; }
+		auto left() const -> int32_t { return left_; }
+		auto right() const -> int32_t { return right_; }
+		auto top() const -> int32_t { return top_; }
+		auto bottom() const -> int32_t { return bottom_; }
 
-		auto width() const -> uint32_t {
+		auto width() const -> int32_t {
 			return right_ - left_;
 		}
 
-		auto height() const -> uint32_t {
+		auto height() const -> int32_t {
 			return bottom_ - top_;
 		}
 
 	private:
 		resizing_edge edge_;
-		uint32_t left_, right_, top_, bottom_;
+		int32_t left_, right_, top_, bottom_;
 	};
 	
 //======================================================================

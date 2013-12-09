@@ -19,7 +19,7 @@ widget_t::widget_t()
 {
 }
 
-widget_t::widget_t(uint32_t width, uint32_t height)
+widget_t::widget_t(int32_t width, int32_t height)
 	: width_(width), height_(height)
 {
 }

@@ -13,28 +13,24 @@ namespace events {
 	{
 		resize_t(widget_wptr const& origin, resizing_edge edge, LPRECT rect)
 		: event_t(origin), edge_(edge),
-		  left_(rect->left), right_(rect->right), top_(rect->top), bottom_(rect->bottom)
+		  width_(rect->right - rect->left), height_(rect->bottom - rect->top)
+		{
+		}
+
+		resize_t(widget_wptr const& origin, resizing_edge edge, int32_t width, int32_t height)
+			: event_t(origin), edge_(edge),
+			width_(width), height_(height)
 		{
 		}
 
 		auto edge() const -> resizing_edge { return edge_; }
 
-		auto left() const -> int32_t { return left_; }
-		auto right() const -> int32_t { return right_; }
-		auto top() const -> int32_t { return top_; }
-		auto bottom() const -> int32_t { return bottom_; }
-
-		auto width() const -> int32_t {
-			return right_ - left_;
-		}
-
-		auto height() const -> int32_t {
-			return bottom_ - top_;
-		}
+		auto width() const -> int32_t { return width_; }
+		auto height() const -> int32_t { return height_; }
 
 	private:
 		resizing_edge edge_;
-		int32_t left_, right_, top_, bottom_;
+		int32_t width_, height_;
 	};
 	
 //======================================================================

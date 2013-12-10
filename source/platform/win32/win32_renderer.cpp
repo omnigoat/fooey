@@ -4,6 +4,7 @@
 #include <atma/config/platform.hpp>
 #include <atma/lockfree/queue.hpp>
 #include <fooey/events/resize.hpp>
+#include <fooey/events/move.hpp>
 #include <map>
 #include <thread>
 
@@ -120,13 +121,19 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		}
 
 		case WM_SIZING:
-		{
-			auto k = (LPRECT)lparam;
-			window->fire("resize", events::resize_t(widget_weak, wparam_to_resizing_edge[wparam], k));
-		}
+			window->fire("resize", events::resize_t(widget_weak, wparam_to_resizing_edge[wparam], (LPRECT)lparam));
+			break;
 
 		case WM_SIZE:
-			//fc = window->on_resize.fire((uint32_t)(lparam & 0xffff), (uint32_t)(lparam >> 16));
+			window->fire("resize-dc", events::resize_t(widget_weak, resizing_edge::none, lparam & 0xffff, lparam >> 16));
+			break;
+
+		case WM_SYSKEYDOWN:
+			window->key_state.down(static_cast<fooey::key_t>(wparam));
+			break;
+
+		case WM_SYSKEYUP:
+			window->key_state.up(static_cast<fooey::key_t>(wparam));
 			break;
 
 		case WM_KEYDOWN:
@@ -158,6 +165,11 @@ LRESULT CALLBACK wnd_proc_setup(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 		ATMA_ASSERT(window);
 		window->set_hwnd(hwnd);
 
+		RECT rect;
+		GetWindowRect(hwnd, &rect);
+
+		window->fire("move.system", events::move_t(weak_widget, rect.left, rect.top));
+		
 		SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG)&wnd_proc);
 	}
 

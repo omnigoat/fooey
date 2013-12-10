@@ -62,6 +62,12 @@
     <ClInclude Include="..\include\fooey\events\resize.hpp">
       <Filter>include\events</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\fooey\events\move.hpp">
+      <Filter>include\events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\fooey\platform\win32\events\move.hpp">
+      <Filter>platform\win32\events</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\widget.cpp">

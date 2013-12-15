@@ -120,12 +120,16 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			break;
 		}
 
+		case WM_MOVE:
+			window->fire("move", events::move_t(widget_weak, LOWORD(lparam), HIWORD(lparam)));
+			break;
+
 		case WM_SIZING:
 			window->fire("resize", events::resize_t(widget_weak, wparam_to_resizing_edge[wparam], (LPRECT)lparam));
 			break;
 
 		case WM_SIZE:
-			window->fire("resize-dc", events::resize_t(widget_weak, resizing_edge::none, lparam & 0xffff, lparam >> 16));
+			window->fire("resize-dc", events::resize_t(widget_weak, resizing_edge::none, LOWORD(lparam), HIWORD(lparam)));
 			break;
 
 		case WM_SYSKEYDOWN:
@@ -168,7 +172,7 @@ LRESULT CALLBACK wnd_proc_setup(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 		RECT rect;
 		GetWindowRect(hwnd, &rect);
 
-		window->fire("move.system", events::move_t(weak_widget, rect.left, rect.top));
+		window->fire("move.internal", events::move_t(weak_widget, rect.left, rect.top));
 		
 		SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG)&wnd_proc);
 	}

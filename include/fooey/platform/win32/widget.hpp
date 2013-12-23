@@ -27,6 +27,8 @@ namespace fooey {
 
 		auto left() const -> int32_t { return left_; }
 		auto top() const -> int32_t { return top_; }
+		auto width() const -> int32_t { return width_; }
+		auto height() const -> int32_t { return height_; }
 		auto width_in_pixels() const -> int32_t { return width_; }
 		auto height_in_pixels() const -> int32_t { return height_; }
 

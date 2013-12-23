@@ -43,14 +43,6 @@ struct win32_root_widget_t : fooey::widget_t
 {
 	win32_root_widget_t()
 	{
-		on("close", [](fooey::events::resize_t& e) {
-			auto widget = std::dynamic_pointer_cast<widget_t>(e.origin().lock());
-			if (!widget)
-				return;
-
-			
-			//DefWindowProc(widget->hwnd(), WM_SIZING, resizing_edge_to_wparam[(int)e.edge()], (LPARAM)e.rect());
-		});
 	}
 };
 

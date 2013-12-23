@@ -87,14 +87,17 @@ namespace fooey {
 	struct event_handler_t : virtual atma::enable_multiple_shared_from_this //std::enable_shared_from_this<event_handler_t>
 	{
 		struct namedesc_t;
+		struct homogenized_function_t;
+		
+		typedef std::multimap<namedesc_t, homogenized_function_t> mapped_fns_t;
+
+		typedef std::vector<mapped_fns_t::const_iterator> delegate_set_t;
 
 		virtual ~event_handler_t() {}
 
-		template <typename FN>
-		auto on(atma::string const& name, FN fn) -> void
-		{
-			insert(namedesc_t(name), homogenize(fn));
-		}
+		
+		auto on(std::initializer_list<std::pair<atma::string, homogenized_function_t>> bindings) -> delegate_set_t;
+		auto unbind(delegate_set_t const&) -> void;
 
 		template <typename T = event_t>
 		auto fire(atma::string const& name, T& e, event_traversal_t t = event_traversal_t::upwards) -> void
@@ -133,23 +136,10 @@ namespace fooey {
 	private:
 		typedef std::function<void(event_t&)> fn_t;
 		
-
-		template <typename T>
-		static auto homogenize(T fn) -> fn_t
-		{
-			return [fn](event_t& e) -> void {
-				typedef typename std::decay_t<typename atma::xtm::function_traits<T>::arg<0>::type> T2;
-				auto nep = dynamic_cast<T2*>(&e);
-				ATMA_ASSERT_MSG(nep, "bad event type");
-				fn(*nep);
-			};
-		}
-
 		auto fire_impl(atma::string const&, event_t&) -> void;
-
 		auto insert(namedesc_t const&, fn_t const&) -> void;
 		
-		std::multimap<namedesc_t, fn_t> mapped_fns_;
+		mapped_fns_t mapped_fns_;
 		event_handler_t* parent_handler_;
 		typedef std::vector<event_handler_t*> children_t;
 		children_t children_handlers_;
@@ -172,6 +162,28 @@ namespace fooey {
 		friend auto operator < (namedesc_t const& lhs, namedesc_t const& rhs) -> bool;
 
 		friend struct event_handler_t;
+	};
+
+	struct event_handler_t::homogenized_function_t
+	{
+		template <typename FN>
+		homogenized_function_t(FN fn) {
+			fn_ = [fn](event_t& e) -> void {
+				typedef typename std::decay_t<typename atma::xtm::function_traits<FN>::arg<0>::type> T2;
+				auto nep = dynamic_cast<T2*>(&e);
+				ATMA_ASSERT_MSG(nep, "bad event type");
+				fn(*nep);
+			};
+		}
+
+		auto operator()(event_t& e) -> void {
+			return fn_(e);
+		}
+
+	private:
+		typedef std::function<void(event_t&)> fn_t;
+
+		fn_t fn_;
 	};
 
 	

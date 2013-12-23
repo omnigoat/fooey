@@ -44,6 +44,20 @@ auto event_handler_t::fire_impl(atma::string const& name, event_t& e) -> void
 	}
 }
 
+auto event_handler_t::on(std::initializer_list<std::pair<atma::string, homogenized_function_t>> bindings) -> delegate_set_t
+{
+	delegate_set_t set;
+	for (auto const& x : bindings)
+		set.push_back(mapped_fns_.insert(std::make_pair(namedesc_t(x.first), x.second)));
+	return set;
+}
+
+auto event_handler_t::unbind(delegate_set_t const& xs) -> void
+{
+	for (auto const& x : xs)
+		mapped_fns_.erase(x);
+}
+
 event_handler_t::namedesc_t::namedesc_t(atma::string const& str)
 	: base_(str)
 {

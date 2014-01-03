@@ -9,6 +9,10 @@ auto key_state_t::down(key_t k) -> void
 {
 	uint8_t ki = static_cast<uint8_t>(k);
 
+	// if we're already down, ignore
+	if (bitfield_[ki])
+		return;
+
 	bitfield_[ki] = true;
 
 	// find all events that use this key as a trigger

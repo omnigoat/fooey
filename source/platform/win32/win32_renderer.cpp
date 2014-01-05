@@ -112,15 +112,29 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			break;
 		}
 
+		/*
+		case WM_WINDOWPOSCHANGING: {
+			if (window->fullscreen_) {
+				auto wndpos = (LPWINDOWPOS)lparam;
+				wndpos->flags |= SWP_NOSIZE;
+			}
+			break;
+		}
+		*/
+
 		case WM_MOVE:
 			window->fire("move", events::move_t(widget_weak, LOWORD(lparam), HIWORD(lparam)));
 			break;
 
-		case WM_SIZING:
+		case WM_SIZING: {
+			auto rect = (LPRECT)lparam;
+			std::cout << "WM_SIZING " << rect->left << ":" << rect->top << " " << (rect->right - rect->left) << "x" << (rect->bottom - rect->top) << std::endl;
 			window->fire("resize", events::resize_t(widget_weak, wparam_to_resizing_edge[wparam], (LPRECT)lparam));
 			break;
+		}
 
 		case WM_SIZE:
+			std::cout << "WM_SIZE " << LOWORD(lparam) << "x" << HIWORD(lparam) << std::endl;
 			window->fire("resize-dc", events::resize_t(widget_weak, resizing_edge::none, LOWORD(lparam), HIWORD(lparam)));
 			break;
 
@@ -178,6 +192,7 @@ LRESULT CALLBACK wnd_proc_setup(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 win32_renderer_t::win32_renderer_t()
 : root_widget_(new win32_root_widget_t), running_(true)
 {
+#if 0
 	wndproc_thread_ = std::thread([=] {
 		while (running_)
 		{
@@ -203,6 +218,7 @@ win32_renderer_t::win32_renderer_t()
 			command();
 		}
 	});
+#endif
 }
 
 win32_renderer_t::~win32_renderer_t()
@@ -229,7 +245,9 @@ auto win32_renderer_t::add_window(window_ptr const& window) -> void
 
 auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 {
-	commands_.push([&window] {
+
+	// create win32 window in the thread-engine of the window
+	window->signal([=] {
 		static char const* win32_classnames = "abcdefghijklmno";
 		static uint32_t win32_classname_idx = 0;
 
@@ -255,10 +273,20 @@ auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 		auto wptr = new widget_wptr(window);
 
 		HWND hwnd = CreateWindow((LPCTSTR)class_atom, window->caption().c_str(), WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-			0,0,window->width_in_pixels(),window->height_in_pixels(),0,0,hh,
+			0, 0, window->width_in_pixels(), window->height_in_pixels(), 0, 0, hh,
 			wptr);
 
 		ATMA_ENSURE(hwnd);
+	});
+
+	// make the window always process the message loop!
+	window->engine_.signal_evergreen([] {
+		MSG msg;
+		while (PeekMessage(&msg, NULL, 0, 0, TRUE) > 0)
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 	});
 
 	return 0;

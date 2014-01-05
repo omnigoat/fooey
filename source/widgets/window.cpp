@@ -12,7 +12,7 @@ using fooey::window_ptr;
 
 
 window_t::window_t(properties::captioned_t::caption_t const& c, uint32_t width, uint32_t height)
-	: widget_t(width, height), captioned_t(c)
+	: widget_t(width, height), captioned_t(c), fullscreen_()
 {
 	on({
 		{"move.internal", [&](events::move_t& e) {

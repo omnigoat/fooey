@@ -128,13 +128,13 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
 		case WM_SIZING: {
 			auto rect = (LPRECT)lparam;
-			std::cout << "WM_SIZING " << rect->left << ":" << rect->top << " " << (rect->right - rect->left) << "x" << (rect->bottom - rect->top) << std::endl;
+			//std::cout << "WM_SIZING " << rect->left << ":" << rect->top << " " << (rect->right - rect->left) << "x" << (rect->bottom - rect->top) << std::endl;
 			window->fire("resize", events::resize_t(widget_weak, wparam_to_resizing_edge[wparam], (LPRECT)lparam));
 			break;
 		}
 
 		case WM_SIZE:
-			std::cout << "WM_SIZE " << LOWORD(lparam) << "x" << HIWORD(lparam) << std::endl;
+			std::cout << "WM_SIZE [" << wparam << "] " << LOWORD(lparam) << "x" << HIWORD(lparam) << std::endl;
 			window->fire("resize-dc", events::resize_t(widget_weak, resizing_edge::none, LOWORD(lparam), HIWORD(lparam)));
 			break;
 

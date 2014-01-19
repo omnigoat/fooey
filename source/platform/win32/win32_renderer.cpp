@@ -98,6 +98,7 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 					break;
 
 				case SC_MAXIMIZE:
+					std::cout << "maximise!" << std::endl;
 					window->fire("maximise");
 					break;
 
@@ -134,9 +135,12 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		}
 
 		case WM_SIZE:
+		{
 			std::cout << "WM_SIZE [" << wparam << "] " << LOWORD(lparam) << "x" << HIWORD(lparam) << std::endl;
 			window->fire("resize-dc", events::resize_t(widget_weak, resizing_edge::none, LOWORD(lparam), HIWORD(lparam)));
 			break;
+		}
+
 
 		case WM_SYSKEYDOWN:
 			window->key_state.down(static_cast<fooey::key_t>(wparam));
@@ -223,8 +227,6 @@ win32_renderer_t::win32_renderer_t()
 
 win32_renderer_t::~win32_renderer_t()
 {
-	running_ = false;
-	wndproc_thread_.join();
 }
 
 auto fooey::system_renderer() -> fooey::renderer_ptr

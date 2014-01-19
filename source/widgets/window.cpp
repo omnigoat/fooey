@@ -21,8 +21,10 @@ window_t::window_t(properties::captioned_t::caption_t const& c, uint32_t width, 
 		}},
 
 		{"resize.internal", [&](events::resize_t& e) {
-			width_ = e.width();
-			height_ = e.height();
+			if (!fullscreen_) {
+				width_ = e.width();
+				height_ = e.height();
+			}
 		}}
 	});
 }

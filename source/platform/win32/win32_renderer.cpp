@@ -250,14 +250,14 @@ auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 
 	// create win32 window in the thread-engine of the window
 	window->signal([=] {
-		static char const* win32_classnames = "abcdefghijklmno";
+		static wchar_t const* win32_classnames = L"abcdefghijklmno";
 		static uint32_t win32_classname_idx = 0;
 
 		HINSTANCE hh = GetModuleHandle(NULL);
 
 		ATMA_ASSERT(win32_classnames[win32_classname_idx]);
 
-		auto wc = WNDCLASS{
+		auto wc = WNDCLASSW{
 			0, &wnd_proc_setup,
 			0, 0,
 			hh,
@@ -274,7 +274,7 @@ auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 		// dynamically allocate a weak_ptr for this window
 		auto wptr = new widget_wptr(window);
 
-		HWND hwnd = CreateWindow((LPCTSTR)class_atom, window->caption().c_str(), WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+		HWND hwnd = CreateWindow((LPCWSTR)class_atom, L"Temporary Name!", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, window->width_in_pixels(), window->height_in_pixels(), 0, 0, hh,
 			wptr);
 

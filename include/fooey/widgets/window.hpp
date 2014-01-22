@@ -33,7 +33,7 @@ namespace fooey {
 	typedef std::shared_ptr<window_t> window_ptr;
 
 
-	inline auto window(std::string const& caption, uint32_t width, uint32_t height) -> window_ptr
+	inline auto window(atma::string const& caption, uint32_t width, uint32_t height) -> window_ptr
 	{
 		return window_ptr(new window_t(caption, width, height));
 	}

@@ -52,7 +52,7 @@ namespace properties {
 	//======================================================================
 	struct captioned_t //: virtual property_t
 	{
-		typedef std::string caption_t;
+		typedef atma::string caption_t;
 
 		captioned_t(caption_t const& caption)
 			: caption_(caption)

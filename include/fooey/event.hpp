@@ -1,34 +1,24 @@
+#pragma once
 //=====================================================================
-//
-//
-//
-//=====================================================================
-#ifndef FOOEY_EVENT_HPP
-#define FOOEY_EVENT_HPP
-//=====================================================================
-#include <atma/string.hpp>
 #include <atma/assert.hpp>
-#include <atma/lockfree/queue.hpp>
-#include <atma/xtm/function.hpp>
+#include <atma/string.hpp>
 #include <atma/enable_multiple_shared_from_this.hpp>
 #include <atma/utf/utf8_string_range.hpp>
-#include <mutex>
+#include <atma/xtm/function.hpp>
+
 #include <functional>
 #include <vector>
 #include <set>
 #include <map>
 #include <memory>
+#include <tuple>
 //=====================================================================
 namespace fooey {
 //=====================================================================
-	
-	//=====================================================================
-	// forward declares
-	//=====================================================================
+
 	struct event_handler_t;
 	typedef std::shared_ptr<event_handler_t> event_handler_ptr;
 	typedef std::weak_ptr<event_handler_t> event_handler_wptr;
-
 
 
 
@@ -84,7 +74,7 @@ namespace fooey {
 	};
 
 	
-	struct event_handler_t : virtual atma::enable_multiple_shared_from_this //std::enable_shared_from_this<event_handler_t>
+	struct event_handler_t : virtual atma::enable_multiple_shared_from_this
 	{
 		struct namedesc_t;
 		struct homogenized_function_t;
@@ -190,6 +180,4 @@ namespace fooey {
 
 //=====================================================================
 } // namespace fooey
-//=====================================================================
-#endif // inclusion guard
 //=====================================================================

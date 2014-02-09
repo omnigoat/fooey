@@ -156,7 +156,7 @@ namespace fooey {
 
 	struct event_handler_t::homogenized_function_t
 	{
-		template <typename FN>
+		template <typename FN, typename std::enable_if<atma::xtm::function_traits<std::decay_t<FN>>::arity != 0, int>::type = 0>
 		homogenized_function_t(FN const& fn) {
 			fn_ = [fn](event_t& e) -> void {
 				typedef std::decay_t<typename atma::xtm::function_traits<std::decay_t<FN>>::arg<0>::type> T2;
@@ -165,6 +165,16 @@ namespace fooey {
 				fn(*nep);
 			};
 		}
+
+#if 1
+		template <typename FN, typename std::enable_if<atma::xtm::function_traits<std::decay_t<FN>>::arity == 0, int>::type = 0>
+		homogenized_function_t(FN const& fn) {
+			fn_ = [fn](event_t& e) -> void {
+				fn();
+			};
+		}
+#endif
+
 
 		auto operator()(event_t& e) -> void {
 			return fn_(e);

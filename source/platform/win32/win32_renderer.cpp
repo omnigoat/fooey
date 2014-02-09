@@ -90,22 +90,8 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 		case WM_SYSCOMMAND:
 		{
-
 			switch (wparam)
 			{
-				case SC_MINIMIZE:
-					window->fire("minimise");
-					break;
-
-				case SC_MAXIMIZE:
-					std::cout << "maximise!" << std::endl;
-					window->fire("maximise");
-					break;
-
-				case SC_RESTORE:
-					window->fire("restore");
-					break;
-
 				case SC_CLOSE:
 					window->fire("close");
 					return 0;
@@ -113,30 +99,56 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			break;
 		}
 
-		/*
-		case WM_WINDOWPOSCHANGING: {
-			if (window->fullscreen_) {
-				auto wndpos = (LPWINDOWPOS)lparam;
-				wndpos->flags |= SWP_NOSIZE;
-			}
-			break;
-		}
-		*/
-
 		case WM_MOVE:
 			window->fire("move", events::move_t(widget_weak, LOWORD(lparam), HIWORD(lparam)));
 			break;
 
-		case WM_SIZING: {
-			auto rect = (LPRECT)lparam;
-			//std::cout << "WM_SIZING " << rect->left << ":" << rect->top << " " << (rect->right - rect->left) << "x" << (rect->bottom - rect->top) << std::endl;
+		case WM_SIZING:
 			window->fire("resize", events::resize_t(widget_weak, wparam_to_resizing_edge[wparam], (LPRECT)lparam));
 			break;
-		}
 
 		case WM_SIZE:
 		{
 			std::cout << "WM_SIZE [" << wparam << "] " << LOWORD(lparam) << "x" << HIWORD(lparam) << std::endl;
+
+			// since WM_SIZING doesn't get sent for maximize/minimize events, but we still need to update
+			// our window's stored size, we'll grab the size and send an internal size event
+			switch (wparam)
+			{
+				case SIZE_MAXIMIZED:
+				{
+					// inform window that we resized
+					RECT r;
+					ATMA_ENSURE_IS(TRUE, GetWindowRect(window->hwnd(), &r));
+					window->fire("resize.internal", events::resize_t(widget_weak, resizing_edge::none, &r));
+					window->fire("maximized");
+					break;
+				}
+
+				case SIZE_MINIMIZED:
+				{
+					// inform window that we resized
+					RECT r;
+					ATMA_ENSURE_IS(TRUE, GetWindowRect(window->hwnd(), &r));
+					window->fire("resize.internal", events::resize_t(widget_weak, resizing_edge::none, &r));
+					window->fire("minimized");
+					break;
+				}
+
+				case SIZE_RESTORED:
+				{
+					// only care about restoring when we've transitioned from a non-restored state
+					if (window->state() == window_state_t::restored)
+						break;
+						
+					RECT r;
+					ATMA_ENSURE_IS(TRUE, GetWindowRect(window->hwnd(), &r));
+					window->fire("resize.internal", events::resize_t(widget_weak, resizing_edge::none, &r));
+					window->fire("restored");
+					break;
+				}
+			}
+
 			window->fire("resize-dc", events::resize_t(widget_weak, resizing_edge::none, LOWORD(lparam), HIWORD(lparam)));
 			break;
 		}

@@ -13,6 +13,13 @@
 namespace fooey {
 //======================================================================
 	
+	enum class window_state_t
+	{
+		restored,
+		maximized,
+		minimized
+	};
+
 	struct window_t :
 		widget_t,
 		properties::captioned_t
@@ -24,10 +31,13 @@ namespace fooey {
 		auto signal(atma::thread::engine_t::signal_t const& fn) -> void { engine_.signal(fn); }
 		auto signal_block() -> void { engine_.signal_block(); }
 
+		auto state() const -> window_state_t { return window_state_; }
+
 		//
 		key_state_t key_state;
 		bool fullscreen_;
 		atma::thread::engine_t engine_;
+		window_state_t window_state_;
 	};
 
 	typedef std::shared_ptr<window_t> window_ptr;

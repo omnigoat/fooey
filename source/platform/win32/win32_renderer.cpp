@@ -274,7 +274,11 @@ auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 		// dynamically allocate a weak_ptr for this window
 		auto wptr = new widget_wptr(window);
 
-		HWND hwnd = CreateWindow((LPCWSTR)class_atom, L"Temporary Name!", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+		wchar_t SERIOUSLY_buffer[256];
+		auto p = atma::utf16_from_utf8(SERIOUSLY_buffer, window->caption().bytes_begin(), window->caption().bytes_end());
+		*p = '\0';
+
+		HWND hwnd = CreateWindow((LPCWSTR)class_atom, SERIOUSLY_buffer, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, window->width_in_pixels(), window->height_in_pixels(), 0, 0, hh,
 			wptr);
 

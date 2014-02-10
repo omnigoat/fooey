@@ -21,7 +21,7 @@ namespace
 		WMSZ_BOTTOM, WMSZ_BOTTOMLEFT, WMSZ_BOTTOMRIGHT, 0
 	};
 
-	events::resizing_edge wparam_to_resizing_edge[] =
+	resizing_edge wparam_to_resizing_edge[] =
 	{
 		resizing_edge::none,
 		resizing_edge::left,
@@ -94,7 +94,7 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			{
 				case SC_CLOSE:
 					window->fire("close");
-					return 0;
+					break;
 			}
 			break;
 		}
@@ -109,7 +109,10 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
 		case WM_SIZE:
 		{
-			std::cout << "WM_SIZE [" << wparam << "] " << LOWORD(lparam) << "x" << HIWORD(lparam) << std::endl;
+			int32_t width = LOWORD(lparam);
+			int32_t height = HIWORD(lparam);
+
+			std::cout << "WM_SIZE [" << wparam << "] " << width << "x" << height << std::endl;
 
 			// since WM_SIZING doesn't get sent for maximize/minimize events, but we still need to update
 			// our window's stored size, we'll grab the size and send an internal size event
@@ -117,20 +120,14 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			{
 				case SIZE_MAXIMIZED:
 				{
-					// inform window that we resized
-					RECT r;
-					ATMA_ENSURE_IS(TRUE, GetWindowRect(window->hwnd(), &r));
-					window->fire("resize.internal", events::resize_t(widget_weak, resizing_edge::none, &r));
+					window->fire("resize.internal", events::resize_t(widget_weak, resizing_edge::none, width, height));
 					window->fire("maximized");
 					break;
 				}
 
 				case SIZE_MINIMIZED:
 				{
-					// inform window that we resized
-					RECT r;
-					ATMA_ENSURE_IS(TRUE, GetWindowRect(window->hwnd(), &r));
-					window->fire("resize.internal", events::resize_t(widget_weak, resizing_edge::none, &r));
+					window->fire("resize.internal", events::resize_t(widget_weak, resizing_edge::none, width, height));
 					window->fire("minimized");
 					break;
 				}
@@ -141,9 +138,7 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 					if (window->state() == window_state_t::restored)
 						break;
 						
-					RECT r;
-					ATMA_ENSURE_IS(TRUE, GetWindowRect(window->hwnd(), &r));
-					window->fire("resize.internal", events::resize_t(widget_weak, resizing_edge::none, &r));
+					window->fire("resize.internal", events::resize_t(widget_weak, resizing_edge::none, width, height));
 					window->fire("restored");
 					break;
 				}
@@ -153,20 +148,13 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			break;
 		}
 
-
+		case WM_KEYDOWN:
 		case WM_SYSKEYDOWN:
 			window->key_state.down(static_cast<fooey::key_t>(wparam));
 			break;
 
-		case WM_SYSKEYUP:
-			window->key_state.up(static_cast<fooey::key_t>(wparam));
-			break;
-
-		case WM_KEYDOWN:
-			window->key_state.down(static_cast<fooey::key_t>(wparam));
-			break;
-
 		case WM_KEYUP:
+		case WM_SYSKEYUP:
 			window->key_state.up(static_cast<fooey::key_t>(wparam));
 			break;
 	}
@@ -208,33 +196,6 @@ LRESULT CALLBACK wnd_proc_setup(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 win32_renderer_t::win32_renderer_t()
 : root_widget_(new win32_root_widget_t), running_(true)
 {
-#if 0
-	wndproc_thread_ = std::thread([=] {
-		while (running_)
-		{
-			// first, do commands!
-			std::function<void()> command;
-			while (commands_.pop(command)) {
-				command();
-			}
-
-			// secondly, do messages
-			// ...
-			MSG msg;
-			while (PeekMessage(&msg, NULL, 0, 0, TRUE) > 0)
-			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
-		}
-
-		// do any more commands that were left over
-		std::function<void()> command;
-		while (commands_.pop(command)) {
-			command();
-		}
-	});
-#endif
 }
 
 win32_renderer_t::~win32_renderer_t()

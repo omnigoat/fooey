@@ -32,12 +32,16 @@ namespace fooey {
 		auto signal_block() -> void { engine_.signal_block(); }
 
 		auto state() const -> window_state_t { return window_state_; }
+		auto drawcontext_width() const -> uint32_t { return dc_width_; }
+		auto drawcontext_height() const -> uint32_t { return dc_height_; }
 
 		//
 		key_state_t key_state;
 		bool fullscreen_;
 		atma::thread::engine_t engine_;
 		window_state_t window_state_;
+		uint32_t dc_width_;
+		uint32_t dc_height_;
 	};
 
 	typedef std::shared_ptr<window_t> window_ptr;

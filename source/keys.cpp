@@ -20,7 +20,7 @@ auto key_state_t::down(key_t k) -> void
 	for (auto& e : down_events_)
 	{
 		key_sequence_t const& seq = std::get<0>(e);
-		uint32_t& chord = std::get<2>(e);
+		uint32& chord = std::get<2>(e);
 
 		if (chord_partial_match(seq.combination(chord).bitfield()))
 		{
@@ -38,13 +38,13 @@ auto key_state_t::down(key_t k) -> void
 	}
 }
 
-auto key_state_t::on_key(key_t k, std::function<void()> const& fn) -> uint32_t
+auto key_state_t::on_key(key_t k, std::function<void()> const& fn) -> uint32
 {
 	down_events_.push_back(std::make_tuple(fooey::key_sequence_t(k), fn, 0u));
 	return down_events_.size();
 }
 
-auto key_state_t::on_key(key_combination_t const& k, std::function<void()> const& fn) -> uint32_t
+auto key_state_t::on_key(key_combination_t const& k, std::function<void()> const& fn) -> uint32
 {
 	down_events_.push_back(std::make_tuple(fooey::key_sequence_t(k), fn, 0u));
 	return down_events_.size();

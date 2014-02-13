@@ -24,7 +24,7 @@ namespace fooey {
 		widget_t,
 		properties::captioned_t
 	{
-		window_t(properties::captioned_t::caption_t const& caption, uint32_t width, uint32_t height);
+		window_t(properties::captioned_t::caption_t const& caption, uint32 width, uint32 height);
 		~window_t();
 
 		auto set_visible(bool) -> void;
@@ -32,22 +32,22 @@ namespace fooey {
 		auto signal_block() -> void { engine_.signal_block(); }
 
 		auto state() const -> window_state_t { return window_state_; }
-		auto drawcontext_width() const -> uint32_t { return dc_width_; }
-		auto drawcontext_height() const -> uint32_t { return dc_height_; }
+		auto drawcontext_width() const -> uint32 { return dc_width_; }
+		auto drawcontext_height() const -> uint32 { return dc_height_; }
 
 		//
 		key_state_t key_state;
 		bool fullscreen_;
 		atma::thread::engine_t engine_;
 		window_state_t window_state_;
-		uint32_t dc_width_;
-		uint32_t dc_height_;
+		uint32 dc_width_;
+		uint32 dc_height_;
 	};
 
 	typedef std::shared_ptr<window_t> window_ptr;
 
 
-	inline auto window(atma::string const& caption, uint32_t width, uint32_t height) -> window_ptr
+	inline auto window(atma::string const& caption, uint32 width, uint32 height) -> window_ptr
 	{
 		return window_ptr(new window_t(caption, width, height));
 	}

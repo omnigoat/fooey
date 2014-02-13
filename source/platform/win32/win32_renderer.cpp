@@ -224,7 +224,7 @@ auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 	// create win32 window in the thread-engine of the window
 	window->signal([=] {
 		static wchar_t const* win32_classnames = L"abcdefghijklmno";
-		static uint32_t win32_classname_idx = 0;
+		static uint32 win32_classname_idx = 0;
 
 		HINSTANCE hh = GetModuleHandle(NULL);
 

@@ -11,7 +11,7 @@ using fooey::window_t;
 using fooey::window_ptr;
 
 
-window_t::window_t(properties::captioned_t::caption_t const& c, uint32_t width, uint32_t height)
+window_t::window_t(properties::captioned_t::caption_t const& c, uint32 width, uint32 height)
 	: widget_t(width, height), captioned_t(c), fullscreen_(), window_state_(window_state_t::restored),
 	  dc_width_(), dc_height_()
 {

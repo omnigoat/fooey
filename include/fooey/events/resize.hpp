@@ -7,7 +7,7 @@ namespace fooey {
 namespace events {
 //======================================================================
 	
-	enum class resizing_edge : uint32_t
+	enum class resizing_edge : uint32
 	{
 		none = 0,
 

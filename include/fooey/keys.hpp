@@ -1,6 +1,7 @@
-#ifndef FOOEY_KEYS_HPP
-#define FOOEY_KEYS_HPP
+#pragma once
 //======================================================================
+#include <atma/types.hpp>
+
 #include <cstdint>
 #include <vector>
 #include <functional>
@@ -114,7 +115,7 @@ namespace fooey {
 			combinations_.push_back(c);
 		}
 
-		auto combination(uint32_t i) const -> key_combination_t const&
+		auto combination(uint32 i) const -> key_combination_t const&
 		{
 			return combinations_[i];
 		}
@@ -132,10 +133,10 @@ namespace fooey {
 		auto down(key_t) -> void;
 		auto up(key_t) -> void;
 
-		auto on_key(key_t, std::function<void()> const&) -> uint32_t;
-		auto on_key(key_combination_t const&, std::function<void()> const&) -> uint32_t;
+		auto on_key(key_t, std::function<void()> const&) -> uint32;
+		auto on_key(key_combination_t const&, std::function<void()> const&) -> uint32;
 
-		//auto on_key_combination(uint8_t, uint8_t, std::function<void()> const&)->uint32_t;
+		//auto on_key_combination(uint8_t, uint8_t, std::function<void()> const&)->uint32;
 
 	private:
 		auto perform_on_down_actions() -> void;
@@ -144,7 +145,7 @@ namespace fooey {
 
 		typedef std::bitset<256> bitfield_t;
 		//typedef std::pair<key_sequence_t, std::function<void()>> event_t;
-		typedef std::tuple<key_sequence_t, std::function<void()>, uint32_t> event_t;
+		typedef std::tuple<key_sequence_t, std::function<void()>, uint32> event_t;
 		typedef std::vector<event_t> events_t;
 
 		bitfield_t bitfield_;
@@ -153,6 +154,4 @@ namespace fooey {
 
 //======================================================================
 } // fooey
-//======================================================================
-#endif
 //======================================================================

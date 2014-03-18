@@ -149,6 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\include\fooey\event.hpp" />
+    <ClInclude Include="..\include\fooey\events\mouse.hpp" />
     <ClInclude Include="..\include\fooey\events\move.hpp" />
     <ClInclude Include="..\include\fooey\events\resize.hpp" />
     <ClInclude Include="..\include\fooey\fooey.hpp" />

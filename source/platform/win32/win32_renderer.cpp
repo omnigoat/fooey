@@ -5,6 +5,7 @@
 #include <atma/lockfree/queue.hpp>
 #include <fooey/events/resize.hpp>
 #include <fooey/events/move.hpp>
+#include <fooey/events/mouse.hpp>
 #include <map>
 #include <thread>
 
@@ -73,12 +74,19 @@ private:
 };
 
 
+
+struct userdata_t
+{
+	widget_wptr widget;
+	bool mouse_entered;
+};
+
+
 LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	// get widget pointer from longptr data
-	auto widget_raw = (widget_wptr*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-	ATMA_ASSERT(widget_raw);
-	auto widget_weak = *widget_raw;
+	auto userdata = (userdata_t*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+	auto const& widget_weak = userdata->widget;
 	auto widget = widget_weak.lock();
 	auto window = std::dynamic_pointer_cast<window_t>(widget);
 	ATMA_ASSERT(widget);
@@ -157,6 +165,31 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		case WM_SYSKEYUP:
 			window->key_state.up(static_cast<fooey::key_t>(wparam));
 			break;
+
+		case WM_MOUSEMOVE:
+			if (!userdata->mouse_entered) {
+				window->fire("mouse-entered", events::mouse_t(widget_weak, GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam)));
+				userdata->mouse_entered = true;
+				TRACKMOUSEEVENT tme{sizeof(TRACKMOUSEEVENT), TME_LEAVE, hwnd, 0};
+				TrackMouseEvent(&tme);
+			}
+			else {
+				window->fire("mouse-move", events::mouse_t(widget_weak, GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam)));
+			}
+			break;
+
+		case WM_MOUSELEAVE:
+			userdata->mouse_entered = false;
+			window->fire("mouse-leave");
+			break;
+
+		case WM_LBUTTONDOWN:
+			window->fire("mouse-down.left", events::mouse_t(widget_weak, GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam)));
+			break;
+
+		case WM_LBUTTONUP:
+			window->fire("mouse-up.left", events::mouse_t(widget_weak, GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam)));
+			break;
 	}
 
 	return DefWindowProc(hwnd, msg, wparam, lparam);
@@ -166,14 +199,15 @@ LRESULT CALLBACK wnd_proc_setup(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 {
 	// on window creation, set the longptr handles for user-data, and
 	// use the *actual* wndproc after we safely know the user-data will be present.
-	if (msg == WM_CREATE) {
-		
+	if (msg == WM_CREATE)
+	{
 		auto weak_widget_raw = (widget_wptr*)((CREATESTRUCT*)lparam)->lpCreateParams;
 		ATMA_ASSERT(weak_widget_raw);
 		auto weak_widget = *weak_widget_raw;
 		auto widget = weak_widget.lock();
 		ATMA_ASSERT(widget);
-		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)weak_widget_raw);
+		auto g = new userdata_t{weak_widget, false};
+		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)g);
 
 		auto window = std::dynamic_pointer_cast<window_t>(widget);
 		ATMA_ASSERT(window);
@@ -187,6 +221,7 @@ LRESULT CALLBACK wnd_proc_setup(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 		window->fire("resize-dc.internal", events::resize_t(weak_widget, resizing_edge::none, r2.right - r2.left, r2.bottom - r2.top));
 
 		SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG)&wnd_proc);
+		//SetWindowLongPtr(hwnd, GWLP_USERDATA, )
 	}
 
 	return DefWindowProc(hwnd, msg, wparam, lparam);

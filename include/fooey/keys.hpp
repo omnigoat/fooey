@@ -78,7 +78,7 @@ namespace fooey {
 				keys_[static_cast<uint8_t>(x)] = true;
 		}
 
-		auto bitfield() const -> bitfield_t { return keys_; }
+		auto bitfield() const -> bitfield_t const& { return keys_; }
 
 	private:
 		bitfield_t keys_;

@@ -17,16 +17,19 @@ event_handler_t::event_handler_t(event_handler_t* parent_handler)
 
 auto event_handler_t::add_child_handler(event_handler_t* child) -> void
 {
+	std::lock_guard<std::mutex> LG(mutex_);
 	return children_handlers_.push_back(child);
 }
 
 auto event_handler_t::set_parent_handler(event_handler_t* parent) -> void
 {
+	std::lock_guard<std::mutex> LG(mutex_);
 	parent_handler_ = parent;
 }
 
 auto event_handler_t::insert(namedesc_t const& desc, fn_t const& fn) -> void
 {
+	std::lock_guard<std::mutex> LG(mutex_);
 	mapped_fns_.insert({desc, fn});
 }
 
@@ -46,6 +49,8 @@ auto event_handler_t::fire_impl(atma::string const& name, event_t& e) -> void
 
 auto event_handler_t::on(std::initializer_list<std::pair<atma::string, homogenized_function_t>> bindings) -> delegate_set_t
 {
+	std::lock_guard<std::mutex> LG(mutex_);
+
 	delegate_set_t set;
 	for (auto const& x : bindings)
 		set.push_back(mapped_fns_.insert(std::make_pair(namedesc_t(x.first), x.second)));
@@ -54,6 +59,8 @@ auto event_handler_t::on(std::initializer_list<std::pair<atma::string, homogeniz
 
 auto event_handler_t::unbind(delegate_set_t const& xs) -> void
 {
+	std::lock_guard<std::mutex> LG(mutex_);
+
 	for (auto const& x : xs)
 		mapped_fns_.erase(x);
 }

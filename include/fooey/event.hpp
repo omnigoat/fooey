@@ -171,7 +171,7 @@ namespace fooey {
 
 		template <typename FN, typename std::enable_if<atma::xtm::function_traits<std::decay_t<FN>>::arity == 0, int>::type = 0>
 		homogenized_function_t(FN const& fn) {
-			fn_ = [fn](event_t& e) -> void {
+			fn_ = [fn](event_t&) -> void {
 				fn();
 			};
 		}

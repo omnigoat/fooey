@@ -21,13 +21,15 @@ namespace events {
 	{
 		resize_t(widget_wptr const& origin, resizing_edge edge, LPRECT rect, bool fullscreen = false)
 		: event_t(origin), edge_(edge),
-		  width_(rect->right - rect->left), height_(rect->bottom - rect->top)
+		  width_(rect->right - rect->left), height_(rect->bottom - rect->top),
+		  fullscreen_(fullscreen)
 		{
 		}
 
 		resize_t(widget_wptr const& origin, resizing_edge edge, int32_t width, int32_t height, bool fullscreen = false)
 			: event_t(origin), edge_(edge),
-			width_(width), height_(height)
+			width_(width), height_(height),
+			fullscreen_(fullscreen)
 		{
 		}
 

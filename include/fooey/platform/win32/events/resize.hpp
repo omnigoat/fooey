@@ -1,14 +1,9 @@
-#ifndef FOOEY_PLATFORM_WIN32_EVENTS_RESIZE_EVENT_HPP
-#define FOOEY_PLATFORM_WIN32_EVENTS_RESIZE_EVENT_HPP
+#pragma once
 //======================================================================
-#include <vector>
-#include <memory>
 #include <fooey/event.hpp>
 //======================================================================
-namespace fooey {
-namespace events {
-//======================================================================
-	
+namespace fooey { namespace events {
+
 	enum class resize_action_t
 	{
 		restore,
@@ -46,9 +41,4 @@ namespace events {
 		bool fullscreen_;
 	};
 	
-//======================================================================
-} // namespace events
-} // namesapce fooey
-//======================================================================
-#endif
-//======================================================================
+} }

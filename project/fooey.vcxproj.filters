@@ -71,6 +71,9 @@
     <ClInclude Include="..\include\fooey\events\mouse.hpp">
       <Filter>include\events</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\fooey\fooey_fwd.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\widget.cpp">

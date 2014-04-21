@@ -153,6 +153,7 @@
     <ClInclude Include="..\include\fooey\events\move.hpp" />
     <ClInclude Include="..\include\fooey\events\resize.hpp" />
     <ClInclude Include="..\include\fooey\fooey.hpp" />
+    <ClInclude Include="..\include\fooey\fooey_fwd.hpp" />
     <ClInclude Include="..\include\fooey\keys.hpp" />
     <ClInclude Include="..\include\fooey\platform\win32\events\move.hpp" />
     <ClInclude Include="..\include\fooey\platform\win32\events\resize.hpp" />

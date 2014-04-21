@@ -1,12 +1,9 @@
-#ifndef FOOEY_EVENTS_RESIZE_HPP
-#define FOOEY_EVENTS_RESIZE_HPP
+#pragma once
 //======================================================================
 #include <atma/config/platform.hpp>
 //======================================================================
-namespace fooey {
-namespace events {
-//======================================================================
-	
+namespace fooey { namespace events {
+
 	enum class resizing_edge : uint32
 	{
 		none = 0,
@@ -22,13 +19,8 @@ namespace events {
 		bottom_right = bottom | right
 	};
 
-//======================================================================
-} // namespace events
-} // namespace fooey
+} }
 //======================================================================
 #ifdef ATMA_PLATFORM_WIN32
 #	include <fooey/platform/win32/events/resize.hpp>
 #endif
-//======================================================================
-#endif // include guard
-//======================================================================

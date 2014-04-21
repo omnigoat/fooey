@@ -14,15 +14,15 @@ namespace fooey {
 	{
 		// control
 		Tab = 0x09,
+		Enter = 0x0d,
 		Shift = 0x10,
 		Ctrl = 0x11,
 		Alt = 0x12,
-		Enter = 0x0d,
+		Esc = 0x1b,
 		Left = 0x25,
 		Up = 0x26,
 		Right = 0x27,
 		Down = 0x28,
-
 
 		// letters
 		A = 0x41,
@@ -50,7 +50,7 @@ namespace fooey {
 		W = 0x57,
 		X = 0x58,
 		Y = 0x59,
-		Z = 0x5a
+		Z = 0x5a,
 	};
 	
 

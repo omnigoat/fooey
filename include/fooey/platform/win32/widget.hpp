@@ -1,19 +1,15 @@
-#ifndef FOOEY_PLATFORM_WIN32_WIDGET_HPP
-#define FOOEY_PLATFORM_WIN32_WIDGET_HPP
+#pragma once
 //======================================================================
-#include <vector>
-#include <memory>
+#include <fooey/fooey_fwd.hpp>
 #include <fooey/event.hpp>
+#include <fooey/event_handler.hpp>
+
 #include <atma/enable_multiple_shared_from_this.hpp>
-//======================================================================
-namespace fooey {
-//======================================================================
-	
-	struct widget_t;
-	typedef std::shared_ptr<widget_t> widget_ptr;
-	typedef std::weak_ptr<widget_t> widget_wptr;
 
-
+#include <vector>
+//======================================================================
+namespace fooey
+{
 	struct widget_t : virtual atma::enable_multiple_shared_from_this, event_handler_t
 	{
 		typedef std::vector<widget_ptr> children_t;
@@ -44,10 +40,4 @@ namespace fooey {
 	private:
 		HWND hwnd_;
 	};
-		
-	
-//======================================================================
-} // fooey
-//======================================================================
-#endif
-//======================================================================
+}

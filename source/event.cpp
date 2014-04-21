@@ -1,4 +1,5 @@
 #include <fooey/event.hpp>
+#include <fooey/event_handler.hpp>
 #include <algorithm>
 #include <atma/string.hpp>
 

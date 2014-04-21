@@ -1,6 +1,7 @@
 #pragma once
 //======================================================================
 #include <fooey/event.hpp>
+#include <fooey/widget.hpp>
 //======================================================================
 namespace fooey { namespace events {
 

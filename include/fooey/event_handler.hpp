@@ -24,7 +24,6 @@ namespace fooey
 		up_down
 	};
 
-	
 	struct event_handler_t : virtual atma::enable_multiple_shared_from_this
 	{
 		struct namedesc_t;

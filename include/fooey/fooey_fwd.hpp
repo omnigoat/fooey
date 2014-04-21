@@ -14,4 +14,9 @@ namespace fooey
 	struct event_handler_t;
 	typedef std::shared_ptr<event_handler_t> event_handler_ptr;
 	typedef std::weak_ptr<event_handler_t> event_handler_wptr;
+
+	namespace events
+	{
+		struct resize_t;
+	}
 }

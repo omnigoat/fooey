@@ -5,7 +5,8 @@
 #include <atma/enable_multiple_shared_from_this.hpp>
 #include <atma/utf/utf8_string_range.hpp>
 #include <atma/xtm/function.hpp>
-#include <atma/enable_if.hpp>
+
+#include <fooey/event.hpp>
 
 #include <functional>
 #include <vector>

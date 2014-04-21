@@ -88,9 +88,6 @@
     <ClCompile Include="..\source\platform\win32\win32_renderer.cpp">
       <Filter>source\platform\win32</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\process_events.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\keys.cpp">
       <Filter>source</Filter>
     </ClCompile>

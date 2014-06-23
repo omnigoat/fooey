@@ -220,7 +220,7 @@ LRESULT CALLBACK wnd_proc_setup(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 		window->fire("move.internal", events::move_t(weak_widget, rect.left, rect.top));
 		window->fire("resize-dc.internal", events::resize_t(weak_widget, resizing_edge::none, r2.right - r2.left, r2.bottom - r2.top));
 
-		SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG)&wnd_proc);
+		SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)&wnd_proc);
 		//SetWindowLongPtr(hwnd, GWLP_USERDATA, )
 	}
 

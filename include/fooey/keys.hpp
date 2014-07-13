@@ -134,8 +134,9 @@ namespace fooey {
 		auto up(key_t) -> void;
 
 		auto on_key(key_t, std::function<void()> const&) -> uint32;
-		auto on_key(key_combination_t const&, std::function<void()> const&) -> uint32;
-
+		auto on_key_up(key_t, std::function<void()> const&) -> uint32;
+		auto on_key(key_combination_t const&, std::function<void()> const&)->uint32;
+		
 		//auto on_key_combination(uint8_t, uint8_t, std::function<void()> const&)->uint32;
 
 	private:

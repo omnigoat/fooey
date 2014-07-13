@@ -22,9 +22,13 @@ auto key_state_t::down(key_t k) -> void
 		key_sequence_t const& seq = std::get<0>(e);
 		uint32& chord = std::get<2>(e);
 
-		if (chord_partial_match(seq.combination(chord).bitfield()))
+		auto nr = seq.combination(chord).bitfield() & bitfield_;
+		//auto knr = nr
+
+		if (nr.at(ki))
+		//if (chord_partial_match(seq.combination(chord).bitfield()))
 		{
-			if (chord_match(seq.combination(chord).bitfield()))
+			//if (chord_match(seq.combination(chord).bitfield()))
 				es.push_back(e);
 		}
 		else {
@@ -52,7 +56,40 @@ auto key_state_t::on_key(key_combination_t const& k, std::function<void()> const
 
 auto key_state_t::up(key_t k) -> void
 {
-	bitfield_[static_cast<uint8_t>(k)] = false;
+	uint8_t ki = static_cast<uint8_t>(k);
+
+	// if we're already up, ignore
+	if (!bitfield_[ki])
+		return;
+
+	// find all events that use this key as a trigger
+	events_t es;
+	for (auto& e : up_events_)
+	{
+		key_sequence_t const& seq = std::get<0>(e);
+		uint32& chord = std::get<2>(e);
+
+		auto nr = seq.combination(chord).bitfield() & bitfield_;
+		//auto knr = nr
+
+		if (nr.at(ki))
+		//if (chord_partial_match(seq.combination(chord).bitfield()))
+		{
+			//if (chord_match(seq.combination(chord).bitfield()))
+				es.push_back(e);
+		}
+		else {
+			chord = 0;
+		}
+	}
+
+	bitfield_[ki] = false;
+
+
+	for (auto const& e : es)
+	{
+		std::get<1>(e)();
+	}
 }
 
 auto key_state_t::chord_match(bitfield_t const& rhs) -> bool
@@ -69,4 +106,10 @@ auto key_state_t::chord_partial_match(bitfield_t const& rhs) -> bool
 	auto nr = (bitfield_ ^ rhs) & bitfield_;
 	
 	return nr.none() && (bitfield_ & rhs).any();
+}
+
+auto key_state_t::on_key_up(key_t k, std::function<void()> const& fn)->uint32
+{
+	up_events_.push_back(std::make_tuple(fooey::key_sequence_t(k), fn, 0u));
+	return (uint32)up_events_.size();
 }

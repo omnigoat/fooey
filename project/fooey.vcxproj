@@ -155,6 +155,7 @@
     <ClInclude Include="..\include\fooey\event_handler.hpp" />
     <ClInclude Include="..\include\fooey\fooey.hpp" />
     <ClInclude Include="..\include\fooey\fooey_fwd.hpp" />
+    <ClInclude Include="..\include\fooey\input\key_state.hpp" />
     <ClInclude Include="..\include\fooey\keys.hpp" />
     <ClInclude Include="..\include\fooey\platform\win32\events\move.hpp" />
     <ClInclude Include="..\include\fooey\platform\win32\events\resize.hpp" />
@@ -164,7 +165,7 @@
     <ClInclude Include="..\include\fooey\widgets\window.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\source\keys.cpp" />
+    <ClCompile Include="..\source\input\key_state.cpp" />
     <ClCompile Include="..\source\platform\win32\win32_renderer.cpp" />
     <ClCompile Include="..\source\event.cpp" />
     <ClCompile Include="..\source\widget.cpp" />

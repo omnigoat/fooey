@@ -1,18 +1,16 @@
-#ifndef FOOEY_WIDGETS_WINDOW_HPP
-#define FOOEY_WIDGETS_WINDOW_HPP
+#pragma once
 //======================================================================
-#include <chrono>
 #include <fooey/widget.hpp>
 #include <fooey/properties.hpp>
-#include <fooey/keys.hpp>
+#include <fooey/input/key_state.hpp>
+
 #include <atma/event.hpp>
 #include <atma/lockfree/queue.hpp>
 #include <atma/config/platform.hpp>
 #include <atma/thread/engine.hpp>
 //======================================================================
-namespace fooey {
-//======================================================================
-	
+namespace fooey
+{
 	enum class window_state_t
 	{
 		restored,
@@ -51,10 +49,4 @@ namespace fooey {
 	{
 		return window_ptr(new window_t(caption, width, height));
 	}
-
-
-//======================================================================
-} // fooey
-//======================================================================
-#endif
-//======================================================================
+}

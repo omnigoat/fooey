@@ -1,3 +1,5 @@
+#include <fooey/input/key_state.hpp>
+
 #include <fooey/keys.hpp>
 #include <algorithm>
 
@@ -7,9 +9,8 @@ using fooey::key_state_t;
 
 auto key_state_t::down(key_t k) -> void
 {
-	uint8_t ki = static_cast<uint8_t>(k);
+	uint8 ki = static_cast<uint8>(k);
 
-	// if we're already down, ignore
 	if (bitfield_[ki])
 		return;
 
@@ -22,10 +23,9 @@ auto key_state_t::down(key_t k) -> void
 		key_sequence_t const& seq = std::get<0>(e);
 		uint32& chord = std::get<2>(e);
 
-		auto nr = seq.combination(chord).bitfield() & bitfield_;
-		//auto knr = nr
-
-		if (nr.at(ki))
+		auto matching_event = bitfield_ & seq.combination(chord).bitfield();
+		
+		if (matching_event.at(ki) != 0)
 		//if (chord_partial_match(seq.combination(chord).bitfield()))
 		{
 			//if (chord_match(seq.combination(chord).bitfield()))
@@ -40,18 +40,6 @@ auto key_state_t::down(key_t k) -> void
 	{
 		std::get<1>(e)();
 	}
-}
-
-auto key_state_t::on_key(key_t k, std::function<void()> const& fn) -> uint32
-{
-	down_events_.push_back(std::make_tuple(fooey::key_sequence_t(k), fn, 0u));
-	return (uint32)down_events_.size();
-}
-
-auto key_state_t::on_key(key_combination_t const& k, std::function<void()> const& fn) -> uint32
-{
-	down_events_.push_back(std::make_tuple(fooey::key_sequence_t(k), fn, 0u));
-	return (uint32)down_events_.size();
 }
 
 auto key_state_t::up(key_t k) -> void
@@ -108,7 +96,14 @@ auto key_state_t::chord_partial_match(bitfield_t const& rhs) -> bool
 	return nr.none() && (bitfield_ & rhs).any();
 }
 
-auto key_state_t::on_key_up(key_t k, std::function<void()> const& fn)->uint32
+
+auto key_state_t::on_key_down(key_combination_t const& k, std::function<void()> const& fn) -> uint32
+{
+	down_events_.push_back(std::make_tuple(fooey::key_sequence_t(k), fn, 0u));
+	return (uint32)down_events_.size();
+}
+
+auto key_state_t::on_key_up(key_combination_t const& k, std::function<void()> const& fn)->uint32
 {
 	up_events_.push_back(std::make_tuple(fooey::key_sequence_t(k), fn, 0u));
 	return (uint32)up_events_.size();

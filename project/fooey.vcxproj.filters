@@ -33,6 +33,12 @@
     <Filter Include="platform\win32\events">
       <UniqueIdentifier>{ca66a257-0cd3-4405-80e8-e99221c3c559}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\input">
+      <UniqueIdentifier>{514e0331-2df7-4999-8a1b-6f59e60925f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\input">
+      <UniqueIdentifier>{9a91c58c-7d70-4669-af55-160fcdf266e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\fooey\fooey.hpp">
@@ -77,6 +83,9 @@
     <ClInclude Include="..\include\fooey\event_handler.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\fooey\input\key_state.hpp">
+      <Filter>include\input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\widget.cpp">
@@ -88,11 +97,11 @@
     <ClCompile Include="..\source\platform\win32\win32_renderer.cpp">
       <Filter>source\platform\win32</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\keys.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\event.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\input\key_state.cpp">
+      <Filter>source\input</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -15,18 +15,18 @@ namespace fooey
 		typedef std::vector<widget_ptr> children_t;
 		
 		widget_t();
-		widget_t(int32_t width, int32_t height);
+		widget_t(int32 width, int32 height);
 		virtual ~widget_t();
 		
 		auto hwnd() const -> HWND { return hwnd_; }
 		auto children() const -> children_t const& { return children_; }
 
-		auto left() const -> int32_t { return left_; }
-		auto top() const -> int32_t { return top_; }
-		auto width() const -> int32_t { return width_; }
-		auto height() const -> int32_t { return height_; }
-		auto width_in_pixels() const -> int32_t { return width_; }
-		auto height_in_pixels() const -> int32_t { return height_; }
+		auto left() const -> int32 { return left_; }
+		auto top() const -> int32 { return top_; }
+		auto width() const -> int32 { return width_; }
+		auto height() const -> int32 { return height_; }
+		auto width_in_pixels() const -> int32 { return width_; }
+		auto height_in_pixels() const -> int32 { return height_; }
 
 
 		auto set_hwnd(HWND h) -> void { hwnd_ = h; }
@@ -35,7 +35,7 @@ namespace fooey
 	protected:
 		widget_wptr parent_;
 		children_t children_;
-		int32_t left_, top_, width_, height_;
+		int32 left_, top_, width_, height_;
 
 	private:
 		HWND hwnd_;

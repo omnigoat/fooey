@@ -142,10 +142,6 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
 				case SIZE_RESTORED:
 				{
-					// only care about restoring when we've transitioned from a non-restored state
-					if (window->state() == window_state_t::restored)
-						break;
-						
 					window->fire("resize.internal", events::resize_t(widget_weak, resizing_edge::none, width, height));
 					window->fire("restored");
 					break;
@@ -285,7 +281,7 @@ auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 		auto wptr = new widget_wptr(window);
 
 		wchar_t SERIOUSLY_buffer[256];
-		auto p = atma::utf16_from_utf8(SERIOUSLY_buffer, window->caption().bytes_begin(), window->caption().bytes_end());
+		auto p = atma::utf16_from_utf8(SERIOUSLY_buffer, window->caption().raw_begin(), window->caption().raw_end());
 		*p = '\0';
 
 		HWND hwnd = CreateWindow((LPCWSTR)class_atom, SERIOUSLY_buffer, WS_OVERLAPPEDWINDOW | WS_VISIBLE,

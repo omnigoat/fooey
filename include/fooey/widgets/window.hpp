@@ -13,7 +13,8 @@ namespace fooey
 {
 	enum class window_state_t
 	{
-		restored,
+		windowed,
+		fullscreen,
 		maximized,
 		minimized
 	};

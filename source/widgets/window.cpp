@@ -12,7 +12,7 @@ using fooey::window_ptr;
 
 
 window_t::window_t(properties::captioned_t::caption_t const& c, uint32 width, uint32 height)
-	: widget_t(width, height), captioned_t(c), fullscreen_(), window_state_(window_state_t::restored),
+	: widget_t(width, height), captioned_t(c), fullscreen_(), window_state_(window_state_t::windowed),
 	  dc_width_(), dc_height_()
 {
 	on({
@@ -22,10 +22,8 @@ window_t::window_t(properties::captioned_t::caption_t const& c, uint32 width, ui
 		}},
 
 		{"resize.internal", [&](events::resize_t& e) {
-			if (!fullscreen_) {
-				width_ = e.width();
-				height_ = e.height();
-			}
+			width_ = e.width();
+			height_ = e.height();
 		}},
 
 		{"resize-dc.internal", [&](events::resize_t& e) {
@@ -42,7 +40,7 @@ window_t::window_t(properties::captioned_t::caption_t const& c, uint32 width, ui
 		}},
 
 		{"restored.internal", [&]() {
-			window_state_ = window_state_t::restored;
+			window_state_ = window_state_t::windowed;
 		}}
 
 	});

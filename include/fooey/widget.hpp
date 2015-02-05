@@ -1,15 +1,14 @@
-#ifndef FOOEY_WIDGET_HPP
-#define FOOEY_WIDGET_HPP
-//======================================================================
+#pragma once
+
 #include <atma/config/platform.hpp>
-//======================================================================
+
 #ifdef ATMA_PLATFORM_WIN32
 #	include <fooey/platform/win32/widget.hpp>
 #endif
-//======================================================================
-namespace fooey {
-//======================================================================
-	
+
+
+namespace fooey
+{
 	// forward declares
 	struct widget_group_t;
 	template <typename> struct widget_builder_t;
@@ -152,8 +151,5 @@ namespace fooey {
 	auto operator , (widget_ptr const& lhs, widget_ptr const& rhs) -> widget_group_t;
 	
 
-//======================================================================
-} // fooey
-//======================================================================
-#endif
-//======================================================================
+
+}

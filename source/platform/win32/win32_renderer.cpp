@@ -92,8 +92,6 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	ATMA_ASSERT(widget);
 
 
-	atma::event_flow_t fc;
-
 	switch (msg)
 	{
 		case WM_SYSCOMMAND:

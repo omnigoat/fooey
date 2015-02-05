@@ -4,6 +4,9 @@
 
 namespace fooey
 {
+	struct renderer_t;
+	typedef std::shared_ptr<renderer_t> renderer_ptr;
+
 	struct widget_t;
 	typedef std::shared_ptr<widget_t> widget_ptr;
 	typedef std::weak_ptr<widget_t> widget_wptr;

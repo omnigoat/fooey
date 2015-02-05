@@ -4,7 +4,7 @@
 #include <atma/string.hpp>
 #include <atma/enable_multiple_shared_from_this.hpp>
 #include <atma/utf/utf8_string_range.hpp>
-#include <atma/xtm/function.hpp>
+#include <atma/function_traits.hpp>
 
 #include <fooey/event.hpp>
 
@@ -112,7 +112,7 @@ namespace fooey
 	struct event_handler_t::homogenized_function_t
 	{
 		// functions that take no arguments are allowed, we just ignore the event_t argument
-		template <typename FN, typename std::enable_if<atma::xtm::arity_equal_to<FN, 0>::value, int>::type = 0>
+		template <typename FN, typename std::enable_if<atma::function_traits<FN>::arity == 0, int>::type = 0>
 		homogenized_function_t(FN const& fn)
 		{
 			fn_ = [fn](event_t&) -> void {
@@ -121,10 +121,10 @@ namespace fooey
 		}
 
 		// any function that takes one argument is assumed to take an event that inherits from event_t
-		template <typename FN, typename std::enable_if<atma::xtm::arity_equal_to<FN, 1>::value, int>::type = 0>
+		template <typename FN, typename std::enable_if<atma::function_traits<FN>::arity == 1, int>::type = 0>
 		homogenized_function_t(FN const& fn)
 		{
-			typedef std::decay_t<typename atma::xtm::function_traits<FN>::arg<0>::type> T2;
+			typedef std::decay_t<typename atma::function_traits<FN>::arg_type<0>> T2;
 
 			fn_ = [fn](event_t& e) -> void
 			{

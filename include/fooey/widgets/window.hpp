@@ -1,5 +1,5 @@
 #pragma once
-//======================================================================
+
 #include <fooey/widget.hpp>
 #include <fooey/properties.hpp>
 #include <fooey/input/key_state.hpp>
@@ -8,7 +8,8 @@
 #include <atma/lockfree/queue.hpp>
 #include <atma/config/platform.hpp>
 #include <atma/thread/engine.hpp>
-//======================================================================
+
+
 namespace fooey
 {
 	enum class window_state_t

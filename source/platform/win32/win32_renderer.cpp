@@ -162,7 +162,7 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
 		case WM_MOUSEMOVE:
 			if (!userdata->mouse_entered) {
-				window->fire("mouse-entered", events::mouse_t(widget_weak, GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam)));
+				window->fire("mouse-enter", events::mouse_t(widget_weak, GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam)));
 				userdata->mouse_entered = true;
 				TRACKMOUSEEVENT tme{sizeof(TRACKMOUSEEVENT), TME_LEAVE, hwnd, 0};
 				TrackMouseEvent(&tme);
@@ -298,6 +298,8 @@ auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 			DispatchMessage(&msg);
 		}
 	});
+
+	window->signal_block();
 
 	return 0;
 }

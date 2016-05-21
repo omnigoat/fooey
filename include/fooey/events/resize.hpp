@@ -21,6 +21,6 @@ namespace fooey { namespace events {
 
 } }
 //======================================================================
-#ifdef ATMA_PLATFORM_WIN32
+#ifdef ATMA_PLATFORM_WINDOWS
 #	include <fooey/platform/win32/events/resize.hpp>
 #endif

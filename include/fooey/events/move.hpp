@@ -13,7 +13,7 @@ namespace events {
 } // namespace events
 } // namespace fooey
 //======================================================================
-#ifdef ATMA_PLATFORM_WIN32
+#ifdef ATMA_PLATFORM_WINDOWS
 #	include <fooey/platform/win32/events/move.hpp>
 #endif
 //======================================================================

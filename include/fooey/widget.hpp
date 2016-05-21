@@ -2,7 +2,7 @@
 
 #include <atma/config/platform.hpp>
 
-#ifdef ATMA_PLATFORM_WIN32
+#ifdef ATMA_PLATFORM_WINDOWS
 #	include <fooey/platform/win32/widget.hpp>
 #endif
 

@@ -128,7 +128,7 @@ namespace fooey
 
 			fn_ = [fn](event_t& e) -> void
 			{
-				ATMA_ASSERT_MSG(!!dynamic_cast<T2*>(&e), "bad event type");
+				ATMA_ASSERT(!!dynamic_cast<T2*>(&e), "bad event type");
 				fn(static_cast<T2&>(e));
 			};
 		}

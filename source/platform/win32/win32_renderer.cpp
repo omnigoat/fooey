@@ -289,6 +289,8 @@ auto win32_renderer_t::build_win32_window(window_ptr const& window) -> HWND
 		ATMA_ENSURE(hwnd);
 	});
 
+	window->signal_block();
+
 	// make the window always process the message loop!
 	window->engine_.signal_evergreen([] {
 		MSG msg;

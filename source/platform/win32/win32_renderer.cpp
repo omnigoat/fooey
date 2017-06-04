@@ -118,7 +118,7 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			int32_t width = LOWORD(lparam);
 			int32_t height = HIWORD(lparam);
 
-			std::cout << "WM_SIZE [" << wparam << "] " << width << "x" << height << std::endl;
+			//std::cout << "WM_SIZE [" << wparam << "] " << width << "x" << height << std::endl;
 
 			// since WM_SIZING doesn't get sent for maximize/minimize events, but we still need to update
 			// our window's stored size, we'll grab the size and send an internal size event
@@ -215,7 +215,6 @@ LRESULT CALLBACK wnd_proc_setup(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 		window->fire("resize-dc.internal", events::resize_t(weak_widget, resizing_edge::none, r2.right - r2.left, r2.bottom - r2.top));
 
 		SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)&wnd_proc);
-		//SetWindowLongPtr(hwnd, GWLP_USERDATA, )
 	}
 
 	return DefWindowProc(hwnd, msg, wparam, lparam);

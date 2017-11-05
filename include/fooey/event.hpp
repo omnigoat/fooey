@@ -7,7 +7,7 @@ namespace fooey
 	struct event_t
 	{
 		event_t(event_handler_wptr const& origin)
-		: propagate_(true), origin_(origin)
+			: origin_(origin)
 		{}
 
 		virtual ~event_t() {}
@@ -18,7 +18,7 @@ namespace fooey
 		auto disable_propagation() -> void { propagate_ = false; }
 
 	private:
-		bool propagate_;
+		mutable bool propagate_ = true;
 		event_handler_wptr origin_;
 	};
 }

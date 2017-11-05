@@ -16,17 +16,17 @@ window_t::window_t(properties::captioned_t::caption_t const& c, uint32 width, ui
 	  dc_width_(), dc_height_()
 {
 	on({
-		{"move.internal", [&](events::move_t& e) {
+		{"move.internal", [&](events::move_t const& e) {
 			left_ = e.left();
 			top_ = e.top();
 		}},
 
-		{"resize.internal", [&](events::resize_t& e) {
+		{"resize.internal", [&](events::resize_t const& e) {
 			width_ = e.width();
 			height_ = e.height();
 		}},
 
-		{"resize-dc.internal", [&](events::resize_t& e) {
+		{"resize-dc.internal", [&](events::resize_t const& e) {
 			dc_width_ = e.width();
 			dc_height_ = e.height();
 		}},

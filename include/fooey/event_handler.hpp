@@ -40,11 +40,11 @@ namespace fooey
 		auto unbind(delegate_set_t const&) -> void;
 
 		template <typename T = event_t>
-		auto fire(atma::string const& name, T& e, event_traversal_t t = event_traversal_t::upwards) -> void
+		auto fire(atma::string const& name, T const& e, event_traversal_t t = event_traversal_t::upwards) -> void
 		{
 			std::lock_guard<std::mutex> LG(mutex_);
 
-			fire_impl(name, static_cast<event_t&>(e));
+			fire_impl(name, static_cast<event_t const&>(e));
 
 			if (t == event_traversal_t::upwards)
 			{
@@ -76,9 +76,9 @@ namespace fooey
 		auto set_parent_handler(event_handler_t*) -> void;
 
 	private:
-		typedef std::function<void(event_t&)> fn_t;
+		typedef std::function<void(event_t const&)> fn_t;
 		
-		auto fire_impl(atma::string const&, event_t&) -> void;
+		auto fire_impl(atma::string const&, event_t const&) -> void;
 		auto insert(namedesc_t const&, fn_t const&) -> void;
 		
 		mapped_fns_t mapped_fns_;
@@ -115,7 +115,7 @@ namespace fooey
 		template <typename FN, typename std::enable_if<atma::function_traits<FN>::arity == 0, int>::type = 0>
 		homogenized_function_t(FN const& fn)
 		{
-			fn_ = [fn](event_t&) -> void {
+			fn_ = [fn](event_t const&) -> void {
 				fn();
 			};
 		}
@@ -126,19 +126,19 @@ namespace fooey
 		{
 			typedef std::decay_t<typename atma::function_traits<FN>::arg_type<0>> T2;
 
-			fn_ = [fn](event_t& e) -> void
+			fn_ = [fn](event_t const& e) -> void
 			{
-				ATMA_ASSERT(!!dynamic_cast<T2*>(&e), "bad event type");
-				fn(static_cast<T2&>(e));
+				ATMA_ASSERT(!!dynamic_cast<T2 const*>(&e), "bad event type");
+				fn(static_cast<T2 const&>(e));
 			};
 		}
 
-		auto operator()(event_t& e) -> void {
+		auto operator()(event_t const& e) -> void {
 			return fn_(e);
 		}
 
 	private:
-		typedef std::function<void(event_t&)> fn_t;
+		typedef std::function<void(event_t const&)> fn_t;
 
 		fn_t fn_;
 	};

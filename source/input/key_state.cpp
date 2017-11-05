@@ -76,8 +76,7 @@ auto key_state_t::down(key_t k) -> void
 	// trigger all events waiting upon this key combination
 	for (auto& e : down_events_)
 	{
-		key_sequence_t const& seq = std::get<0>(e);
-		uint& chord = std::get<2>(e);
+		auto& [seq, fn, chord] = e;
 		auto const& combination_bitfield = seq.combination(chord).bitfield();
 
 		auto matching_event = bitfield_ & combination_bitfield;
@@ -85,7 +84,7 @@ auto key_state_t::down(key_t k) -> void
 		{
 			++chord;
 			if (chord == seq.chord_count()) {
-				std::get<1>(e)();
+				fn();
 				chord = 0;
 			}
 		}
@@ -105,8 +104,7 @@ auto key_state_t::up(key_t k) -> void
 	// trigger all events waiting upon this key combination
 	for (auto& e : up_events_)
 	{
-		key_sequence_t const& seq = std::get<0>(e);
-		uint& chord = std::get<2>(e);
+		auto& [seq, fn, chord] = e;
 		auto const& combination_bitfield = seq.combination(chord).bitfield();
 
 		auto matching_event = bitfield_ & combination_bitfield;
@@ -114,7 +112,7 @@ auto key_state_t::up(key_t k) -> void
 		{
 			++chord;
 			if (chord == seq.chord_count()) {
-				std::get<1>(e)();
+				fn();
 				chord = 0;
 			}
 		}

@@ -34,7 +34,7 @@ auto event_handler_t::insert(namedesc_t const& desc, fn_t const& fn) -> void
 	mapped_fns_.insert({desc, fn});
 }
 
-auto event_handler_t::fire_impl(atma::string const& name, event_t& e) -> void
+auto event_handler_t::fire_impl(atma::string const& name, event_t const& e) -> void
 {
 	auto N = namedesc_t(name);
 	auto R = mapped_fns_.equal_range(N);

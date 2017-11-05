@@ -2,6 +2,7 @@
 ; ignore visual studio files
 Debug/
 Release/
+project/x64
 *.opensdf
 *.suo
 *.sdf
